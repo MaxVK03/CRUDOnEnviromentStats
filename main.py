@@ -28,8 +28,11 @@ def get_db():
         db.close()
 
 
+db_dependency = Annotated[SessionLocal, Depends(get_db)]
+
+
 @app.get("/allData")
-async def allData(db: Annotated[SessionLocal, Depends(get_db)]):
+async def allData(db: db_dependency):
     return db.query(CountryData).all()
 
 
