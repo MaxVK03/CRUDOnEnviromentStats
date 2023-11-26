@@ -67,66 +67,66 @@ async def allData(db: db_dependency):
     return db.query(CountryData).all()
 
 
-@app.get("/country/CName/{countryid}/afterYear/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryid).filter(CountryData.year > yearid).all()
+@app.get("/country/C_Name/{countryName}/afterYear/{yearid}")
+async def country(countryname: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year > yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CName/{countryid}/beforeYear/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryid).filter(CountryData.year < yearid).all()
+@app.get("/country/C_Name/{countryName}/beforeYear/{yearid}")
+async def country(countryname: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year < yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CName/{countryid}/year/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryid).filter(CountryData.year == yearid).all()
+@app.get("/country/C_Name/{countryName}/year/{yearid}")
+async def country(countryname: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year == yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CName/{countryid}")
-async def country(countryid: str, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryid).all()
+@app.get("/country/C_Name/{countryName}")
+async def country(countryname: str, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.country == countryname).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CIso/{countryid}/afterYear/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryid).filter(CountryData.year > yearid).all()
+@app.get("/country/C_ISO/{countryISO}/afterYear/{yearid}")
+async def country(countryiso: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).filter(CountryData.year > yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CIso/{countryid}/beforeYear/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryid).filter(CountryData.year < yearid).all()
+@app.get("/country/C_ISO/{countryISO}/beforeYear/{yearid}")
+async def country(countryiso: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).filter(CountryData.year < yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CIso/{countryid}/year/{yearid}")
-async def country(countryid: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryid).filter(
+@app.get("/country/C_ISO/{countryISO}/year/{yearid}")
+async def country(countryiso: str, yearid: int, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).filter(
         CountryData.year == yearid).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
-@app.get("/country/CIso/{countryid}")
-async def country(countryid: str, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryid).all()
+@app.get("/country/C_ISO/{countryISO}")
+async def country(countryiso: str, db: db_dependency):
+    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).all()
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
