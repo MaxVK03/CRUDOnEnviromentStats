@@ -1,6 +1,13 @@
-from fastapi import FastAPI
+from typing import Annotated
+from fastapi import FastAPI, Depends
+from database import SessionLocal, engine
+from database import engine
+from models import CountryData
+import models
 
 app = FastAPI()
+
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
@@ -11,3 +18,19 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.get("/allData")
+async def allData(db: Annotated[SessionLocal, Depends(get_db)]):
+    return db.query(CountryData).all()
+
+
+
