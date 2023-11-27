@@ -1,6 +1,8 @@
 from typing import Annotated
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from starlette import status
+
 from database import SessionLocal
 from database import engine
 from models import CountryData
@@ -23,43 +25,21 @@ db_dependency = Annotated[SessionLocal, Depends(get_db)]
 
 
 class CountryDataRequest(BaseModel):
-    id: int
-    country: str
-    year: int
+    country: str = Field(min_length=1, max_length=100)
+    year: int = Field(min=0, max=9999)
     iso_code: str
     population: int
     gdp: float
     co2: float
-    co2_per_capita: float
-    co2_per_gdp: float
-    co2_per_unit_energy: float
-    coal_co2: float
-    coal_co2_per_capita: float
-    consumption_co2: float
-    consumption_co2_per_capita: float
-    consumption_co2_per_gdp: float
-    cumulative_co2: float
-    cumulative_coal_co2: float
     energy_per_capita: float
     energy_per_gdp: float
-    flaring_co2: float
-    flaring_co2_per_capita: float
-    gas_co2: float
-    gas_co2_per_capita: float
-    ghg_excluding_lucf_per_capita: float
-    ghg_per_capita: float
-    land_use_change_co2: float
-    land_use_change_co2_per_capita: float
     methane: float
-    methane_per_capita: float
     nitrous_oxide: float
-    nitrous_oxide_per_capita: float
-    primary_energy_consumption: float
-    share_of_temperature_change_from_ghg: float
+    temperature_change_from_ch4: float
+    temperature_change_from_co2: float
+    temperature_change_from_ghg: float
+    temperature_change_from_n2o: float
     total_ghg: float
-    total_ghg_excluding_lucf: float
-    trade_co2: float
-    trade_co2_share: float
 
 
 @app.get("/allData")
@@ -69,7 +49,8 @@ async def allData(db: db_dependency):
 
 @app.get("/country/C_Name/{countryName}/afterYear/{yearid}")
 async def country(countryname: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year > yearid).all()
+    todo_model = (db.query(CountryData).filter(CountryData.country == countryname)
+                  .filter(CountryData.year > yearid).all())
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
@@ -77,7 +58,8 @@ async def country(countryname: str, yearid: int, db: db_dependency):
 
 @app.get("/country/C_Name/{countryName}/beforeYear/{yearid}")
 async def country(countryname: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year < yearid).all()
+    todo_model = (db.query(CountryData).filter(CountryData.country == countryname)
+                  .filter(CountryData.year < yearid).all())
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
@@ -85,7 +67,8 @@ async def country(countryname: str, yearid: int, db: db_dependency):
 
 @app.get("/country/C_Name/{countryName}/year/{yearid}")
 async def country(countryname: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.country == countryname).filter(CountryData.year == yearid).all()
+    todo_model = (db.query(CountryData).filter(CountryData.country == countryname)
+                  .filter(CountryData.year == yearid).all())
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
@@ -101,15 +84,19 @@ async def country(countryname: str, db: db_dependency):
 
 @app.get("/country/C_ISO/{countryISO}/afterYear/{yearid}")
 async def country(countryiso: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).filter(CountryData.year > yearid).all()
+    todo_model = (db.query(CountryData).filter(CountryData.iso_code == countryiso)
+                  .filter(CountryData.year > yearid).all())
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
 
 
+
+
 @app.get("/country/C_ISO/{countryISO}/beforeYear/{yearid}")
 async def country(countryiso: str, yearid: int, db: db_dependency):
-    todo_model = db.query(CountryData).filter(CountryData.iso_code == countryiso).filter(CountryData.year < yearid).all()
+    todo_model = (db.query(CountryData).filter(CountryData.iso_code == countryiso)
+                  .filter(CountryData.year < yearid).all())
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
@@ -130,3 +117,50 @@ async def country(countryiso: str, db: db_dependency):
     if todo_model is None or len(todo_model) == 0:
         return HTTPException(status_code=400, detail='Item not found')
     return todo_model
+
+
+@app.post("/country")
+async def create_country(countrydt: CountryDataRequest, db: db_dependency):
+    todo_model = CountryData(**countrydt.model_dump())
+    db.add(todo_model)
+    db.commit()
+    db.refresh(todo_model)
+    return todo_model
+
+
+@app.put("/country/{countryName}/{yearid}")
+async def update_country(countryname: str, yearid: int, countrydt: CountryDataRequest, db: db_dependency):
+    todo_model = (db.query(CountryData).filter(CountryData.country == countryname)
+                  .filter(CountryData.year == yearid).first())
+    if todo_model is None:
+        return HTTPException(status_code=400, detail='Item not found')
+    todo_model.country = countrydt.country
+    todo_model.year = countrydt.year
+    todo_model.iso_code = countrydt.iso_code
+    todo_model.population = countrydt.population
+    todo_model.gdp = countrydt.gdp
+    todo_model.co2 = countrydt.co2
+    todo_model.energy_per_capita = countrydt.energy_per_capita
+    todo_model.energy_per_gdp = countrydt.energy_per_gdp
+    todo_model.methane = countrydt.methane
+    todo_model.nitrous_oxide = countrydt.nitrous_oxide
+    todo_model.temperature_change_from_ch4 = countrydt.temperature_change_from_ch4
+    todo_model.temperature_change_from_co2 = countrydt.temperature_change_from_co2
+    todo_model.temperature_change_from_ghg = countrydt.temperature_change_from_ghg
+    todo_model.temperature_change_from_n2o = countrydt.temperature_change_from_n2o
+    todo_model.total_ghg = countrydt.total_ghg
+    db.commit()
+    db.refresh(todo_model)
+    return todo_model
+
+
+@app.delete("/country/{countryName}/{yearid}")
+async def delete_country(countryname: str, yearid: int, db: db_dependency):
+    todo_model = (db.query(CountryData).filter(CountryData.country == countryname)
+                  .filter(CountryData.year == yearid).first())
+    if todo_model is None:
+        return HTTPException(status_code=400, detail='Item not found')
+    db.delete(todo_model)
+    db.commit()
+    return todo_model
+
