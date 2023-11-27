@@ -1,44 +1,24 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Float, Date
+from sqlalchemy import Column, Integer, String, Float
 
 
 #Generated using AI
 class CountryData(Base):
     __tablename__ = "CountryData"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     country = Column(String)
     year = Column(Integer)
     iso_code = Column(String)
     population = Column(Integer)
     gdp = Column(Float)
     co2 = Column(Float)
-    co2_per_capita = Column(Float)
-    co2_per_gdp = Column(Float)
-    co2_per_unit_energy = Column(Float)
-    coal_co2 = Column(Float)
-    coal_co2_per_capita = Column(Float)
-    consumption_co2 = Column(Float)
-    consumption_co2_per_capita = Column(Float)
-    consumption_co2_per_gdp = Column(Float)
-    cumulative_co2 = Column(Float)
-    cumulative_coal_co2 = Column(Float)
     energy_per_capita = Column(Float)
     energy_per_gdp = Column(Float)
-    flaring_co2 = Column(Float)
-    flaring_co2_per_capita = Column(Float)
-    gas_co2 = Column(Float)
-    gas_co2_per_capita = Column(Float)
-    ghg_excluding_lucf_per_capita = Column(Float)
-    ghg_per_capita = Column(Float)
-    land_use_change_co2 = Column(Float)
-    land_use_change_co2_per_capita = Column(Float)
     methane = Column(Float)
-    methane_per_capita = Column(Float)
     nitrous_oxide = Column(Float)
-    nitrous_oxide_per_capita = Column(Float)
-    primary_energy_consumption = Column(Float)
-    share_of_temperature_change_from_ghg = Column(Float)
+    temperature_change_from_ch4 = Column(Float)
+    temperature_change_from_co2 = Column(Float)
+    temperature_change_from_ghg = Column(Float)
+    temperature_change_from_n2o = Column(Float)
     total_ghg = Column(Float)
-    total_ghg_excluding_lucf = Column(Float)
-    trade_co2 = Column(Float)
-    trade_co2_share = Column(Float)
+
