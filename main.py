@@ -4,6 +4,7 @@ from Database.database import engine
 from Database.database_utils import get_db
 import models
 from routers import country_routes, continent_routes
+from auths import auth
 
 app = FastAPI()
 
@@ -11,6 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app.include_router(country_routes.router)
 app.include_router(continent_routes.router)
+app.include_router(auth.router)
 
 '''
 async def country_emissions(countryname: str, db: db_dependency):
