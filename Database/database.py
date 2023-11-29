@@ -3,7 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///./CountryData.db"
+SQLALCHEMY_DATABASE_URI = "sqlite:///./CountryDataCo2.db"
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 print("starting engine")
 engine = create_engine(

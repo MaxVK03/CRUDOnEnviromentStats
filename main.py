@@ -1,27 +1,18 @@
 from typing import Annotated
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel, Field
-from database import SessionLocal
-from database import engine
-from models import CountryData
+from Database.database import engine
+from Database.database_utils import get_db
 import models
+from routers import country_routes, continent_routes
 
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
 
+app.include_router(country_routes.router)
+app.include_router(continent_routes.router)
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-db_dependency = Annotated[SessionLocal, Depends(get_db)]
-
-
+'''
 async def country_emissions(countryname: str, db: db_dependency):
     emissions_data = db.query(
         CountryData.country,
@@ -110,12 +101,11 @@ async def create_country(countrydt: CountryDataRequest, db: db_dependency):
 
 
 # Update by country name
-@app.put("/country/{countryName}/{yearid}")
+@app.put("/country/{countryName}")
 async def update_country_by_name(countryname: str,
-                                 yearid: int,
                                  countrydt: CountryDataRequest,
                                  db: db_dependency):
-    todo_model = get_country_data(db, country_name=countryname, yearid=yearid)
+    todo_model = get_country_data(db, country_name=countryname)
     handle_not_found(todo_model)
     update_country_data(todo_model, countrydt)
     db.commit()
@@ -219,4 +209,76 @@ async def country(countryiso: str, yearid: int, db: db_dependency):
 
 
 # Req1 no 3
+# all temprature change data per continent
+@app.get("/continent/temperatureChange")
+async def country(db: db_dependency):
+    todo_model = db.query(CountryData.continent,
+                          CountryData.temperature_change_from_ch4,
+                          CountryData.temperature_change_from_co2,
+                          CountryData.temperature_change_from_ghg,
+                          CountryData.temperature_change_from_n2o).filter(CountryData.country in ["Africa", "Asia",
+                                                                                                  "North America",
+                                                                                                  "South America",
+                                                                                                  "Oceania",
+                                                                                                  "Europe",
+                                                                                                  "Antarctica"]).all()
+    if todo_model is None or len(todo_model) == 0:
+        return HTTPException(status_code=400, detail='Item not found')
+    return todo_model
 
+
+# all temprature change data per continent from a required year onwards
+@app.get("/continent/temperatureChange/afterYear/{yearid}")
+async def country(yearid: int, db: db_dependency):
+    todo_model = (db.query(CountryData.continent,
+                           CountryData.temperature_change_from_ch4,
+                           CountryData.temperature_change_from_co2,
+                           CountryData.temperature_change_from_ghg,
+                           CountryData.temperature_change_from_n2o)
+                  .filter(CountryData.country in ["Africa", "Asia", "North America",
+                                                  "South America", "Oceania", "Europe", "Antarctica"])
+                  .filter(CountryData.year > yearid).all())
+    if todo_model is None or len(todo_model) == 0:
+        return HTTPException(status_code=400, detail='Item not found')
+    return todo_model
+
+
+# Req1 no 4
+# :TODO Group by the Millions
+# to retrieve the energy per capita and per GDP data for all countries in a
+#   given year, if available, sorted per population size and returned in batches
+# of M = {10, 20, 50, 100}
+@app.get("/country/energy/{yearid}")
+async def country(yearid: int, db: db_dependency):
+    todo_model = (db.query(CountryData.country,
+                           CountryData.energy_per_capita,
+                           CountryData.energy_per_gdp).filter(CountryData.year == yearid)
+                  .order_by(CountryData.population).all())
+    if todo_model is None or len(todo_model) == 0:
+        return HTTPException(status_code=400, detail='Item not found')
+    return todo_model
+
+
+# Req1
+#  5. to retrieve the top or bottom N, N ≥ 1 countries based on their share of
+# contribution to climate change (column share of temperature change
+# from ghg) either for a specific year or for the previous M, M ≥ 1 years.
+@app.get("/country/temperatureChange/{yearid}")
+async def country(yearid: int, db: db_dependency):
+    todo_model = (db.query(CountryData.country,
+                           CountryData.temperature_change_from_ghg).filter(CountryData.year == yearid)
+                  .order_by(CountryData.temperature_change_from_ghg).all())
+    if todo_model is None or len(todo_model) == 0:
+        return HTTPException(status_code=400, detail='Item not found')
+    return todo_model
+
+
+@app.get("/country/temperatureChange/previous/{yearid}")
+async def country(yearid: int, db: db_dependency):
+    todo_model = (db.query(CountryData.country,
+                           CountryData.temperature_change_from_ghg).filter(CountryData.year < yearid)
+                  .order_by(CountryData.temperature_change_from_ghg).all())
+    if todo_model is None or len(todo_model) == 0:
+        return HTTPException(status_code=400, detail='Item not found')
+    return todo_model
+    '''
