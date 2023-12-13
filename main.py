@@ -66,7 +66,7 @@ async def allData(db: db_dependency):
 
 
 # Req1 no 1
-def get_country_data(db: db_dependency,
+def get_country_data_with_timeFrame(db: db_dependency,
                      country_name=None,
                      country_iso=None,
                      yearid=None,
@@ -102,7 +102,7 @@ def update_country_data(country_model, country_data):
 # Retrieve
 @app.get("/country/C_Name/{countryName}/year/{yearid}")
 async def country(countryname: str, yearid: int, db: db_dependency):
-    todo_model = get_country_data(db, country_name=countryname, yearid=yearid)
+    todo_model = get_country_data_with_timeFrame(db, country_name=countryname, yearid=yearid)
     return handle_not_found(todo_model)
 
 
@@ -121,7 +121,7 @@ async def create_country(countrydt: CountryDataRequest, db: db_dependency):
 async def update_country_by_name(countryname: str,
                                  countrydt: CountryDataRequest,
                                  db: db_dependency):
-    todo_model = get_country_data(db, country_name=countryname)
+    todo_model = get_country_data_with_timeFrame(db, country_name=countryname)
     handle_not_found(todo_model)
     update_country_data(todo_model, countrydt)
     db.commit()
@@ -132,7 +132,7 @@ async def update_country_by_name(countryname: str,
 # Delete
 @app.delete("/country/{countryName}/{yearid}")
 async def delete_country_by_name(countryname: str, yearid: int, db: db_dependency):
-    todo_model = get_country_data(db, country_name=countryname, yearid=yearid)
+    todo_model = get_country_data_with_timeFrame(db, country_name=countryname, yearid=yearid)
     handle_not_found(todo_model)
     db.delete(todo_model)
     db.commit()
@@ -142,7 +142,7 @@ async def delete_country_by_name(countryname: str, yearid: int, db: db_dependenc
 # Retrieve by ISO code
 @app.get("/country/C_ISO/{countryISO}/year/{yearid}")
 async def country_by_iso(countryiso: str, yearid: int, db: db_dependency):
-    todo_model = get_country_data(db, country_iso=countryiso, yearid=yearid)
+    todo_model = get_country_data_with_timeFrame(db, country_iso=countryiso, yearid=yearid)
     return handle_not_found(todo_model)
 
 
@@ -152,7 +152,7 @@ async def update_country_by_iso(countryiso: str,
                                 yearid: int,
                                 countrydt: CountryDataRequest,
                                 db: db_dependency):
-    todo_model = get_country_data(db, country_iso=countryiso, yearid=yearid)
+    todo_model = get_country_data_with_timeFrame(db, country_iso=countryiso, yearid=yearid)
     handle_not_found(todo_model)
     update_country_data(todo_model, countrydt)
     db.commit()
@@ -163,7 +163,7 @@ async def update_country_by_iso(countryiso: str,
 # Delete by ISO code
 @app.delete("/country/{countryISO}/{yearid}")
 async def delete_country_by_iso(countryiso: str, yearid: int, db: db_dependency):
-    todo_model = get_country_data(db, country_iso=countryiso, yearid=yearid)
+    todo_model = get_country_data_with_timeFrame(db, country_iso=countryiso, yearid=yearid)
     handle_not_found(todo_model)
     db.delete(todo_model)
     db.commit()

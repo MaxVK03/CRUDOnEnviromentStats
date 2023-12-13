@@ -27,13 +27,18 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
 
     """
     if countryName and yearid and timeFrame:
-        return country_service.get_country_data(db=db, countryName=countryName, iso=None,
-                                                yearid=yearid, timeFrame=timeFrame)
+        return country_service.get_country_data_with_timeFrame(db=db, countryName=countryName, iso=None, yearid=yearid,
+                                                               timeFrame=timeFrame)
     elif countryIsocode and yearid and timeFrame:
-        return country_service.get_country_data(db=db, countryName=None, iso=countryIsocode,
-                                                yearid=yearid, timeFrame=timeFrame)
+        return country_service.get_country_data_with_timeFrame(db=db, countryName=None, iso=countryIsocode,
+                                                               yearid=yearid,
+                                                               timeFrame=timeFrame)
+    elif countryName:
+        return country_service.get_country_data_without_timeFrame(db=db, countryName=countryName, iso=None, yearid=None,
+                                                               timeFrame=None)
     else:
         return 'Invalid parameters.'
+
 
 @router.post("/country")
 async def create_country(countrydt: CountryDataRequest, db=db_dependency):
@@ -82,31 +87,23 @@ async def delete_country(countryName: str = None, countryIsocode: str = None,
         return country_service.delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, timeFrame)
     elif countryIsocode and yearid and timeFrame:
         return country_service.get(db, countryIsocode, yearid, timeFrame)
-    elif countryName and yearid:
-        return country_service.delete_country_data_by_name_and_year(db, countryName, yearid)
-    elif countryIsocode and yearid:
-        return country_service.delete_country_data_by_isocode_and_year(db, countryIsocode, yearid)
-    elif countryName:
-        return country_service.delete_country_data_by_name(db, countryName)
-    elif countryIsocode:
-        return country_service.delete_country_data_by_isocode(db, countryIsocode)
+    else:
+        return 'Invalid parameters.'
 
 
 @router.get("/country/emissions")
 async def get_country_emissions(countryName: str = None, countryIsocode: str = None,
-                                yearid: int = None, db=db_dependency):
+                                yearid: int = None, timeFrame: str = None, db=db_dependency):
     """
     Retrieve country emissions data based on various criteria.
     Access: GET /country/emissions
+    :param timeFrame:
     :param countryName: Optional[str] - The name of the country.
     :param countryIsocode: Optional[str] - The iso code of the country.
     :param yearid: Optional[int] - The year of the data.
     :param db: The database session.
     :return: Emissions data based on the provided criteria.
     """
-    if countryName and yearid:
-        return country_service.get_country_emissions_by_name_after_year(db, countryName, yearid)
-    elif countryIsocode and yearid:
-        return country_service.get_country_emissions_by_isocode_after_year(db, countryIsocode, yearid)
-    elif countryName:
-        return country_service.get_country_emissions_by_name
+    if countryName and yearid and timeFrame:
+        return country_service.get_country_emissions(db=db, countryName=countryName, iso=None,
+                                                     yearid=yearid, timeFrame=timeFrame)
