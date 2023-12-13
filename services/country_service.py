@@ -145,11 +145,7 @@ def get_country_emissions_by_name_after_year(db, countryName, yearid):
 
 
 def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
-    result = None
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
-    if timeFrame is None:
-        result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
-    else:
-        result = query_country_data(db, field, value, yearid, timeFrame)
-    return handle_not_found(result)
+    result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
+    return result

@@ -36,6 +36,10 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
     elif countryName:
         return country_service.get_country_data_without_timeFrame(db=db, countryName=countryName, iso=None, yearid=None,
                                                                timeFrame=None)
+    elif countryIsocode:
+        return country_service.get_country_data_without_timeFrame(db=db, countryName=None, iso=countryIsocode,
+                                                               yearid=None,
+                                                               timeFrame=None)
     else:
         return 'Invalid parameters.'
 
