@@ -273,7 +273,7 @@ async def get_country_emissions_by_isocode_after_year(countryIsocode: str, yeari
     return country_service.get_country_emissions_by_isocode_after_year(db, countryIsocode, yearid)
 
 
-@router.get("/country/energyPerCapita/{yearid}")
+@router.get("/country/energyPerCapitaAndGDP/{yearid}")
 async def get_energy_per_capita_by_year(yearid: int, db=db_dependency):
     """
     Retrieve energy per capita by year.
@@ -289,12 +289,12 @@ async def get_energy_per_capita_by_year(yearid: int, db=db_dependency):
 
     :return: The energy per capita for that year.
     """
-    return country_service.get_energy_per_capita_by_year(db, yearid)
+    return country_service.get_country_energy_by_year(db, yearid)
 
 
 @router.get("/countries/climateContribution/{year}")
 async def get_climate_contribution_by_year(year: int, n: int, order: str = Query('asc', regex='^(asc|desc)$'),
-                                           db=Depends(get_db)):
+                                           db=db_dependency):
     """
     Retrieve climate contribution by year.
 
@@ -319,7 +319,7 @@ async def get_climate_contribution_by_year(year: int, n: int, order: str = Query
 # TODO: double check this as I dont back my regex
 @router.get("/countries/climateContribution/previousYears")
 async def get_climate_contribution_previous_years(m: int, n: int,
-                                                  order: str = Query('asc', regex='^(asc|desc)$'), db=Depends(get_db)):
+                                                  order: str = Query('asc', regex='^(asc|desc)$'), db=db_dependency):
     """
     Retrieve climate contribution by year.
 

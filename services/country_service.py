@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+from sqlalchemy import asc
+from sqlalchemy.orm import load_only
 from models import CountryData
 
 
@@ -80,22 +82,30 @@ def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
 
 
 def get_country_emissions_by_name(db, countryName):
-    result = db.query(CountryData.country,
-                      CountryData.co2,
-                      CountryData.methane,
-                      CountryData.nitrous_oxide,
-                      CountryData.total_ghg).filter(CountryData.country == countryName).all()
+    result = db.query(CountryData).filter(CountryData.country == countryName).options(
+        load_only(
+            CountryData.year,
+            CountryData.country,
+            CountryData.co2,
+            CountryData.methane,
+            CountryData.nitrous_oxide,
+            CountryData.total_ghg)
+        ).all()
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
 
 def get_country_emissions_by_isocode(db, countryIsocode):
-    result = db.query(CountryData.country,
-                      CountryData.co2,
-                      CountryData.methane,
-                      CountryData.nitrous_oxide,
-                      CountryData.total_ghg).filter(CountryData.iso_code == countryIsocode).all()
+    result = db.query(CountryData).filter(CountryData.iso_code == countryIsocode).options(
+        load_only(
+            CountryData.year,
+            CountryData.country,
+            CountryData.co2,
+            CountryData.methane,
+            CountryData.nitrous_oxide,
+            CountryData.total_ghg)
+    ).all()
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
@@ -112,7 +122,7 @@ def get_country_emissions_by_name_after_year(db, countryName, yearid):
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
-
+#TODO Fix filtering on two things, this gives internal server error.
 def get_country_emissions_by_isocode_after_year(db, countryIsocode, yearid):
     result = db.query(CountryData.country,
                       CountryData.co2,
@@ -124,16 +134,23 @@ def get_country_emissions_by_isocode_after_year(db, countryIsocode, yearid):
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
-
-def get_energy_per_capita_by_year(db, yearid):
-    result = db.query(CountryData.country,
-                      CountryData.energy_per_capita).filter(CountryData.year == yearid).all()
+def get_country_energy_by_year(db, yearid):
+    result = db.query(CountryData).filter(CountryData.year == yearid).options(
+        load_only(
+            CountryData.country,
+            CountryData.year,
+            CountryData.population,
+            CountryData.energy_per_capita,
+            CountryData.energy_per_gdp
+        )
+    ).order_by(asc(CountryData.population)).all()
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
-
 # TODO: Fix the ordering
+#Hi Max, Arnaud here. I just found that you can do .order_by(asc|desc( ' what you want to filter by))
+#I presume this will be helpful for this part. I don't think you need to do the regex.
 def get_climate_contribution_by_year(db, year, n, order):
     if order == 'asc':
         result = db.query(CountryData.country,
