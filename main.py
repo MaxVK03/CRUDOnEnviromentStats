@@ -1,5 +1,7 @@
 from typing import Annotated
 from fastapi import FastAPI, Depends, HTTPException
+from starlette.middleware.cors import CORSMiddleware
+
 from Database.database import engine
 from Database.database_utils import get_db
 import models
@@ -13,6 +15,18 @@ models.Base.metadata.create_all(bind=engine)
 app.include_router(country_routes.router)
 app.include_router(continent_routes.router)
 app.include_router(auth.router)
+
+origins = [
+    'http://localhost:3000'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
 
 '''
 async def country_emissions(countryname: str, db: db_dependency):

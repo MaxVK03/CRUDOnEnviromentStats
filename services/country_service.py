@@ -3,6 +3,7 @@ from models import CountryData
 
 
 def get_country_data_by_name_and_year(db, country_name, yearid):
+    #first100
     result = db.query(CountryData).filter(CountryData.country == country_name, CountryData.year == yearid).all()
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
@@ -39,7 +40,7 @@ def delete_country_data_by_name_and_year(db, country_name, yearid):
 
 
 def get_all_data(db):
-    result = db.query(CountryData).all()
+    result = db.query(CountryData).first()
     return result
 
 

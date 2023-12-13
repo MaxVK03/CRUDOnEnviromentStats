@@ -11,7 +11,7 @@ db_dependency = Depends(get_db)
 # TODO: Add returns for update
 
 
-@router.get("/allData")
+@router.get("/allData/")
 async def get_all_data(db=db_dependency):
     """
     Get all data from the database
