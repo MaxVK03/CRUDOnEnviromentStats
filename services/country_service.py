@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import asc
+from sqlalchemy import asc, desc
 from sqlalchemy.orm import load_only
 from models import CountryData
 
@@ -8,7 +8,6 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
     model_field = getattr(CountryData, model_field_name)
     year_field = CountryData.year
 
-    # Ensure yearid is an integer
     yearid = int(yearid) if yearid is not None else None
 
     timeFrame_conditions = {
@@ -22,7 +21,6 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
     if condition is not None:
         return db.query(CountryData).filter(condition, model_field == value).all()
     else:
-        # Handle case where timeFrame is not one of 'before', 'after', or 'equal'
         return db.query(CountryData).filter(model_field == value).all()
 
 
@@ -39,16 +37,61 @@ def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
     return query_country_data(db, field, value, yearid, timeFrame)
 
 
-def get_country_emissions(db, countryName, iso, yearid, timeFrame):
-    result = None
+def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
+    result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
+    return result
 
-    if timeFrame is None:
-        result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
+
+def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame):
+    field = 'country' if countryName else 'iso_code'
+    value = countryName or iso
+    yearid = int(yearid) if yearid is not None else None
+    year_field = CountryData.year
+
+    timeFrame_conditions = {
+        'before': year_field < yearid,
+        'after': year_field > yearid,
+        'equal': year_field == yearid
+    }
+
+    condition = timeFrame_conditions.get(timeFrame, year_field == yearid)
+    result = None
+    if condition is not None:
+
+        result = db.query(CountryData).filter(condition, CountryData.__dict__[field] == value).options(
+            load_only(
+                CountryData.year,
+                CountryData.country,
+                CountryData.co2,
+                CountryData.methane,
+                CountryData.nitrous_oxide,
+                CountryData.total_ghg)
+        ).all()
     else:
-        result = query_country_data(db, field, value, yearid, timeFrame)
+        result = db.query(CountryData).filter(condition, CountryData.__dict__[field] == value).options(
+            load_only(
+                CountryData.year,
+                CountryData.country,
+                CountryData.co2,
+                CountryData.methane,
+                CountryData.nitrous_oxide,
+                CountryData.total_ghg)
+        ).all()
+    return handle_not_found(result)
 
+
+def get_country_emissions_by_name(db, countryName):
+    result = db.query(CountryData).filter(CountryData.country == countryName).options(
+        load_only(
+            CountryData.year,
+            CountryData.country,
+            CountryData.co2,
+            CountryData.methane,
+            CountryData.nitrous_oxide,
+            CountryData.total_ghg)
+    ).all()
     return handle_not_found(result)
 
 
@@ -105,47 +148,31 @@ def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
     return {"detail": "Deleted successfully"}
 
 
-def get_country_emissions_by_name(db, countryName):
-    result = db.query(CountryData).filter(CountryData.country == countryName).options(
+# TODO: Think we are missing the share of climate change thing in DB
+def getClimCont(db, noCountries, year, sort):
+    if sort == 'top':
+        result = db.query(CountryData).filter(CountryData.year == year).order_by(
+            asc(CountryData.temperature_change_from_ghg)).limit(noCountries).all()
+        return handle_not_found(result)
+    elif sort == 'bottom':
+        result = db.query(CountryData).filter(CountryData.year == year).order_by(desc(
+            CountryData.temperature_change_from_ghg)).limit(noCountries).all()
+        return handle_not_found(result)
+    else:
+        return 'Invalid parameters.'
+
+
+def getEnergy(db, noCountries, year):
+    # to retrieve the energy per capita and per GDP data for all countries in a
+    # given year, if available, sorted per population size and returned in batches
+    # of M = {10, 20, 50, 100};
+
+    result = db.query(CountryData).options(
         load_only(
             CountryData.year,
             CountryData.country,
-            CountryData.co2,
-            CountryData.methane,
-            CountryData.nitrous_oxide,
-            CountryData.total_ghg)
-    ).all()
+            CountryData.energy_per_gdp,
+            CountryData.energy_per_capita)
+    ).limit(noCountries).all()
+
     return handle_not_found(result)
-
-
-def get_country_emissions_by_isocode(db, countryIsocode):
-    result = db.query(CountryData).filter(CountryData.iso_code == countryIsocode).options(
-        load_only(
-            CountryData.year,
-            CountryData.country,
-            CountryData.co2,
-            CountryData.methane,
-            CountryData.nitrous_oxide,
-            CountryData.total_ghg)
-    ).all()
-    return handle_not_found(result)
-
-
-def get_country_emissions_by_name_after_year(db, countryName, yearid):
-    result = db.query(CountryData).filter(CountryData.country == countryName, CountryData.year >= yearid).options(
-        load_only(
-            CountryData.year,
-            CountryData.country,
-            CountryData.co2,
-            CountryData.methane,
-            CountryData.nitrous_oxide,
-            CountryData.total_ghg)
-    ).all()
-    return handle_not_found(result)
-
-
-def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
-    field = 'country' if countryName else 'iso_code'
-    value = countryName or iso
-    result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
-    return result

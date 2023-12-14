@@ -1,5 +1,3 @@
-from http.client import HTTPException
-
 from fastapi import APIRouter, Depends
 from Database.database_utils import get_db
 from services import country_service
@@ -35,11 +33,11 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
                                                                timeFrame=timeFrame)
     elif countryName:
         return country_service.get_country_data_without_timeFrame(db=db, countryName=countryName, iso=None, yearid=None,
-                                                               timeFrame=None)
+                                                                  timeFrame=None)
     elif countryIsocode:
         return country_service.get_country_data_without_timeFrame(db=db, countryName=None, iso=countryIsocode,
-                                                               yearid=None,
-                                                               timeFrame=None)
+                                                                  yearid=None,
+                                                                  timeFrame=None)
     else:
         return 'Invalid parameters.'
 
@@ -108,6 +106,26 @@ async def get_country_emissions(countryName: str = None, countryIsocode: str = N
     :param db: The database session.
     :return: Emissions data based on the provided criteria.
     """
+
     if countryName and yearid and timeFrame:
-        return country_service.get_country_emissions(db=db, countryName=countryName, iso=None,
-                                                     yearid=yearid, timeFrame=timeFrame)
+        return country_service.get_country_emission_with_timeframe(db=db, countryName=countryName, iso=None,
+                                                                   yearid=yearid, timeFrame=timeFrame)
+    elif countryIsocode and yearid and timeFrame:
+        return country_service.get_country_emission_with_timeframe(db=db, countryName=None, iso=countryIsocode,
+                                                                   yearid=yearid, timeFrame=timeFrame)
+    elif countryName:
+        return country_service.get_country_emissions_by_name(db=db, countryName=countryName)
+
+
+@router.get("/country/energy/")
+def energy(noCountries: int = None,
+           yearid: int = None, db=db_dependency):
+    if noCountries and yearid:
+        return country_service.getEnergy(db=db, noCountries=noCountries, year=yearid)
+
+
+@router.get("/country/climCont/")
+def climCont(noCountries: int = None,
+             yearid: int = None, db=db_dependency, sort: str = None):
+    if noCountries and yearid and sort:
+        return country_service.getClimCont(db=db, noCountries=noCountries, year=yearid, sort=sort)
