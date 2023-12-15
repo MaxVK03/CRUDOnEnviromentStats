@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from Database.database_utils import get_db
-from services import country_service
+from services import country_service, converter
 from models import CountryDataRequest
 
 router = APIRouter()
@@ -9,13 +9,14 @@ db_dependency = Depends(get_db)
 
 @router.get("/country/data")
 async def get_country_data(countryName: str = None, countryIsocode: str = None,
-                           yearid: int = None, timeFrame: str = None, db=db_dependency):
+                           yearid: int = None, timeFrame: str = None, inCSV: str = None, db=db_dependency):
     """
     Retrieve country data based on various criteria.
     Access: GET /country/data
     - countryName: Optional[str] - The name of the country.
     - countryIsocode: Optional[str] - The iso code of the country.
     - yearid: Optional[int] - The year of the data.
+    :param inCSV:
     :param timeFrame:
     :param yearid:
     :param countryIsocode:
@@ -23,23 +24,32 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
     :param db: The database session.
     :return: Country data based on the provided criteria.
 
+
     """
+
+    result = None
     if countryName and yearid and timeFrame:
-        return country_service.get_country_data_with_timeFrame(db=db, countryName=countryName, iso=None, yearid=yearid,
-                                                               timeFrame=timeFrame)
+        result = country_service.get_country_data_with_timeFrame(db=db, countryName=countryName, iso=None,
+                                                                 yearid=yearid,
+                                                                 timeFrame=timeFrame)
     elif countryIsocode and yearid and timeFrame:
-        return country_service.get_country_data_with_timeFrame(db=db, countryName=None, iso=countryIsocode,
-                                                               yearid=yearid,
-                                                               timeFrame=timeFrame)
+        result = country_service.get_country_data_with_timeFrame(db=db, countryName=None, iso=countryIsocode,
+                                                                 yearid=yearid,
+                                                                 timeFrame=timeFrame)
     elif countryName:
-        return country_service.get_country_data_without_timeFrame(db=db, countryName=countryName, iso=None, yearid=None,
-                                                                  timeFrame=None)
+        result = country_service.get_country_data_without_timeFrame(db=db, countryName=countryName, iso=None,
+                                                                    yearid=None,
+                                                                    timeFrame=None)
     elif countryIsocode:
-        return country_service.get_country_data_without_timeFrame(db=db, countryName=None, iso=countryIsocode,
-                                                                  yearid=None,
-                                                                  timeFrame=None)
+        result = country_service.get_country_data_without_timeFrame(db=db, countryName=None, iso=countryIsocode,
+                                                                    yearid=None, timeFrame=None)
     else:
         return 'Invalid parameters.'
+
+    if inCSV is not None:
+        return converter.csvSender(result)
+    else:
+        return result
 
 
 @router.post("/country")
@@ -88,17 +98,18 @@ async def delete_country(countryName: str = None, countryIsocode: str = None,
     if countryName and yearid and timeFrame:
         return country_service.delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, timeFrame)
     elif countryIsocode and yearid and timeFrame:
-        return country_service.get(db, countryIsocode, yearid, timeFrame)
+        return country_service.delete_country_data_by_isocode_and_year(db, countryIsocode, yearid)
     else:
         return 'Invalid parameters.'
 
 
 @router.get("/country/emissions")
 async def get_country_emissions(countryName: str = None, countryIsocode: str = None,
-                                yearid: int = None, timeFrame: str = None, db=db_dependency):
+                                yearid: int = None, timeFrame: str = None, inCSV:str = None, db=db_dependency):
     """
     Retrieve country emissions data based on various criteria.
     Access: GET /country/emissions
+    :param inCSV:
     :param timeFrame:
     :param countryName: Optional[str] - The name of the country.
     :param countryIsocode: Optional[str] - The iso code of the country.
@@ -107,25 +118,45 @@ async def get_country_emissions(countryName: str = None, countryIsocode: str = N
     :return: Emissions data based on the provided criteria.
     """
 
+    result = None
     if countryName and yearid and timeFrame:
-        return country_service.get_country_emission_with_timeframe(db=db, countryName=countryName, iso=None,
+         result = country_service.get_country_emission_with_timeframe(db=db, countryName=countryName, iso=None,
                                                                    yearid=yearid, timeFrame=timeFrame)
     elif countryIsocode and yearid and timeFrame:
-        return country_service.get_country_emission_with_timeframe(db=db, countryName=None, iso=countryIsocode,
+        result = country_service.get_country_emission_with_timeframe(db=db, countryName=None, iso=countryIsocode,
                                                                    yearid=yearid, timeFrame=timeFrame)
     elif countryName:
-        return country_service.get_country_emissions_by_name(db=db, countryName=countryName)
+        result = country_service.get_country_emissions_by_name(db=db, countryName=countryName)
+
+    # Convert to CSV if requested:
+    if inCSV is not None:
+        return converter.csvSender(result)
+    else:
+        return result
 
 
+# energy per capita and gdp
 @router.get("/country/energy/")
 def energy(noCountries: int = None,
-           yearid: int = None, db=db_dependency):
+           yearid: int = None, page: int = None, inCSV:str = None, db=db_dependency):
+    result = None
     if noCountries and yearid:
-        return country_service.getEnergy(db=db, noCountries=noCountries, year=yearid)
+        result = country_service.getEnergy(db=db, page=page, noCountries=noCountries, year=yearid)
+
+    if inCSV is not None:
+        return converter.csvSender(result)
+    else:
+        return result
 
 
 @router.get("/country/climCont/")
 def climCont(noCountries: int = None,
-             yearid: int = None, db=db_dependency, sort: str = None):
+             yearid: int = None, db=db_dependency, sort: str = None, inCSV:str = None):
+    result = None
     if noCountries and yearid and sort:
-        return country_service.getClimCont(db=db, noCountries=noCountries, year=yearid, sort=sort)
+        result = country_service.getClimCont(db=db, noCountries=noCountries, year=yearid, sort=sort)
+
+    if inCSV is not None:
+        return converter.csvSender(result)
+    else:
+        return result

@@ -1,3 +1,5 @@
+import io
+
 from fastapi import HTTPException
 from sqlalchemy import asc, desc
 from sqlalchemy.orm import load_only
@@ -32,6 +34,7 @@ def handle_not_found(result):
 
 # Below are all gets
 def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
+
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
     return query_country_data(db, field, value, yearid, timeFrame)
@@ -162,17 +165,22 @@ def getClimCont(db, noCountries, year, sort):
         return 'Invalid parameters.'
 
 
-def getEnergy(db, noCountries, year):
-    # to retrieve the energy per capita and per GDP data for all countries in a
-    # given year, if available, sorted per population size and returned in batches
-    # of M = {10, 20, 50, 100};
+def getEnergy(db, page, noCountries, year):
+    # Set a default page number if page is None
+    if page is None:
+        page = 1
 
+    # Calculate the offset
+    offset_value = (page - 1) * noCountries
+
+    # Query with offset and limit for pagination
     result = db.query(CountryData).options(
         load_only(
             CountryData.year,
             CountryData.country,
             CountryData.energy_per_gdp,
             CountryData.energy_per_capita)
-    ).limit(noCountries).all()
+    ).filter(CountryData.year == year).offset(offset_value).limit(noCountries).all()
 
     return handle_not_found(result)
+    # return handle_not_found(result)
