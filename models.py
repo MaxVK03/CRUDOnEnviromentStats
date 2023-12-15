@@ -4,7 +4,6 @@ from Database.database import Base
 from sqlalchemy import Column, Integer, String, Float
 
 
-#Generated using AI
 class CountryData(Base):
     __tablename__ = "CountryData"
     id = Column(Integer, primary_key=True)
@@ -18,6 +17,7 @@ class CountryData(Base):
     energy_per_gdp = Column(Float)
     methane = Column(Float)
     nitrous_oxide = Column(Float)
+    share_of_temperature_change_from_ghg = Column(Float)
     temperature_change_from_ch4 = Column(Float)
     temperature_change_from_co2 = Column(Float)
     temperature_change_from_ghg = Column(Float)
@@ -36,6 +36,7 @@ class CountryDataRequest(BaseModel):
     energy_per_gdp: float
     methane: float
     nitrous_oxide: float
+    share_of_temperature_change_from_ghg: float
     temperature_change_from_ch4: float
     temperature_change_from_co2: float
     temperature_change_from_ghg: float
