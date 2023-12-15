@@ -297,6 +297,12 @@ paths:
         schema:
           type: integer
           title: Yearid
+      - name: pastYears
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Pastyears
       - name: sort
         in: query
         required: false
@@ -325,16 +331,16 @@ paths:
     get:
       summary: Get Temperature Change By Continent
       description: |-
-        Returns the temperature change by continent
+        Returns the temperature change by continent.
+        Can be filtered for a certain year and later.
 
         Name: "/continent/temperatureChange"
 
-        Acssess: "continent/temperatureChange"
-            - No parameters
-
-        :param year:
-        :param timeFrame:
+        Access: GET continent/temperatureChange
+        - year: Optional[int] - The year of the data.
         :param continent:
+        :param year:
+        :param inCSV:
         :param db: Database session
         :return: Temperature change by continent
       operationId: get_temperature_change_by_continent_continent_temperatureChange_get
@@ -351,12 +357,12 @@ paths:
         schema:
           type: integer
           title: Year
-      - name: timeFrame
+      - name: inCSV
         in: query
         required: false
         schema:
           type: string
-          title: Timeframe
+          title: Incsv
       responses:
         '200':
           description: Successful Response
