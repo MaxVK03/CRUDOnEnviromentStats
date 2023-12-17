@@ -15,6 +15,7 @@ const App = () => {
         energy_per_gdp: '',
         methane: '',
         nitrous_oxide: '',
+        share_of_temperature_change_from_ghg: '',
         temperature_change_from_ch4: '',
         temperature_change_from_co2: '',
         temperature_change_from_ghg: '',
@@ -25,26 +26,28 @@ const App = () => {
 
     const fetchCO2Data = async () => {
         try {
-            const response = await api.get('/allData/');
+            const response = await api.get('/country/data?countryName=Canada');
             if (Array.isArray(response.data)) {
                 setEnvData(response.data);
+                console.log(response.data)
             } else {
                 setEnvData([]); // Set to empty array if response is not an array
             }
         } catch (error) {
             console.error("Error fetching data:", error);
             setEnvData([{
-                "country": "Afghanistan",
-                "iso_code": "AFG",
+                "country": "Error fetching the country",
+                "iso_code": "ERR",
                 "gdp": null,
                 "energy_per_capita": null,
                 "methane": null,
+                "share_of_temperature_change_from_ghg":null,
                 "temperature_change_from_ch4": null,
                 "temperature_change_from_ghg": null,
                 "total_ghg": null,
                 "population": 3752993,
                 "id": 1,
-                "year": 1850,
+                "year": 1250,
                 "co2": null,
                 "energy_per_gdp": null,
                 "nitrous_oxide": null,
