@@ -3,758 +3,378 @@ info:
   title: FastAPI
   version: 0.1.0
 paths:
-  /allData:
+  "/country/data":
     get:
-      summary: Get All Data
+      summary: Get Country Data
       description: |-
-        Get all data from the database
-
-        name: '/allData'
-
-        Access: GET /allData
-            - No parameters
-
-        :param db: Takes in the database session, No user input required.
-
-        :return: Returns all data from the database.
-      operationId: get_all_data_allData_get
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-  /country/C_Name/{countryName}/year/{yearid}:
-    get:
-      summary: Get Country By Name And Year
-      description: |-
-        Retrieve country data by country name and year.
-
-        name: '/country/C_Name/{countryName}/year/{yearid}'
-
-        Access: GET /country/C_Name/{countryName}/year/{yearid}
-            - countryName: String - The name of the country.
-            - yearid: int - The year of the data.
-
-        :param countryName: The name of the country.
-
-        :param yearid: the year of the data.
-
-        :param db: Takes in the database session.
-
-        :return: Returns that country data for that year.
-      operationId: get_country_by_name_and_year_country_C_Name__countryName__year__yearid__get
+        Retrieve country data based on various criteria.
+        Access: GET /country/data
+        - countryName: Optional[str] - The name of the country.
+        - countryIsocode: Optional[str] - The iso code of the country.
+        - yearid: Optional[int] - The year of the data.
+        :param inCSV:
+        :param timeFrame:
+        :param yearid:
+        :param countryIsocode:
+        :param countryName:
+        :param db: The database session.
+        :return: Country data based on the provided criteria.
+      operationId: get_country_data_country_data_get
       parameters:
-        - name: countryName
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryname
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
+      - name: countryName
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryname
+      - name: countryIsocode
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryisocode
+      - name: yearid
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Yearid
+      - name: timeFrame
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Timeframe
+      - name: inCSV
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Incsv
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/country":
     post:
       summary: Create Country
       description: |-
         Create a new country to add to the database.
-
-        name: '/country'
-
         Access: POST /country
-            - countrydt: CountryData The country data to be added to the database.
-
-        :param countrydt: The country data to be added to the database.
-
+        :param countrydt: The country data to be added.
         :param db: The database session.
-
-        :return: Nothing
+        :return: Result of the creation operation.
       operationId: create_country_country_post
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CountryDataRequest'
-        required: true
+              "$ref": "#/components/schemas/CountryDataRequest"
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/{countryName}:
+                "$ref": "#/components/schemas/HTTPValidationError"
     put:
-      summary: Update Country By Name
+      summary: Update Country
       description: |-
-        Update a country by name.
-
-        name: '/country/{countryName}'
-
-        Access: PUT /country/{countryName}
-            - countryName: String - The name of the country to be updated.
-
-        :param countryName: The name of the country to be updated.
-
-        :param countrydt: A country data request object containing the data to be updated Allows for
-        validation.
-
+        Update country data by name or iso code.
+        Access: PUT /country
+        :param countryName: Optional[str] - The name of the country.
+        :param countryIsocode: Optional[str] - The iso code of the country.
+        :param countrydt: A country data request object containing the data to be updated.
         :param db: The database session.
-
-        :return: Nothing
-      operationId: update_country_by_name_country__countryName__put
+        :return: Result of the update operation.
+      operationId: update_country_country_put
       parameters:
-        - name: countryName
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryname
+      - name: countryName
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryname
+      - name: countryIsocode
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryisocode
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CountryDataRequest'
+              "$ref": "#/components/schemas/CountryDataRequest"
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/{countryName}/{yearid}:
+                "$ref": "#/components/schemas/HTTPValidationError"
     delete:
-      summary: Delete Country By Name And Year
+      summary: Delete Country
       description: |-
-        Delete a country by name and year.
-
-        name: '/country/{countryName}/{yearid}'
-
-        Access: DELETE /country/{countryName}/{yearid}
-            - countryName: String - The name of the country to be deleted.
-            - yearid: int - The year of the data to be deleted.
-
-        :param countryName: The name of the country to be deleted.
-        :param yearid: The year of the data to be deleted.
+        Delete a country by name, iso code, and/or year.
+        Access: DELETE /country
+        :param timeFrame:
+        :param countryName: Optional[str] - The name of the country.
+        :param countryIsocode: Optional[str] - The iso code of the country.
+        :param yearid: Optional[int] - The year of the data.
         :param db: The database session.
-        return: Nothing
-      operationId: delete_country_by_name_and_year_country__countryName___yearid__delete
+        :return: Result of the deletion operation.
+      operationId: delete_country_country_delete
       parameters:
-        - name: countryName
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryname
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
+      - name: countryName
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryname
+      - name: countryIsocode
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryisocode
+      - name: yearid
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Yearid
+      - name: timeFrame
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Timeframe
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_isocode/{countryIsocode}:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/country/emissions":
     get:
-      summary: Get Country By Isocode
+      summary: Get Country Emissions
       description: |-
-        Retrieve country data by country iso code.
-
-        Name: '/country/c_isocode/{countryIsocode}'
-
-        Access: GET /country/c_isocode/{countryIsocode}
-            - countryIsocode: String - The iso code of the country.
-
-        :param countryIsocode: The iso code of the country.
+        Retrieve country emissions data based on various criteria.
+        Access: GET /country/emissions
+        :param inCSV:
+        :param timeFrame:
+        :param countryName: Optional[str] - The name of the country.
+        :param countryIsocode: Optional[str] - The iso code of the country.
+        :param yearid: Optional[int] - The year of the data.
         :param db: The database session.
-        :return: The data matching the iso code.
-      operationId: get_country_by_isocode_country_c_isocode__countryIsocode__get
+        :return: Emissions data based on the provided criteria.
+      operationId: get_country_emissions_country_emissions_get
       parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
+      - name: countryName
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryname
+      - name: countryIsocode
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Countryisocode
+      - name: yearid
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Yearid
+      - name: timeFrame
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Timeframe
+      - name: inCSV
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Incsv
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    put:
-      summary: Update Country By Isocode
-      description: |-
-        Update a country by iso code.
-
-        Name: '/country/c_isocode/{countryIsocode}'
-
-        Access: PUT /country/c_isocode/{countryIsocode}
-            - countryIsocode: String - The iso code of the country to be updated.
-
-        :param countryIsocode: The iso code of the country to be updated.
-
-        :param countrydt: A country data request object containing the data to be updated Allows for
-        validation.
-
-        :param db: The database session.
-
-        :return: Nothing
-      operationId: update_country_by_isocode_country_c_isocode__countryIsocode__put
-      parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CountryDataRequest'
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_isocode/{countryIsocode}/year/{yearid}:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/country/energy/":
     get:
-      summary: Get Country By Isocode And Year
-      description: |-
-        Retrieve country data by country iso code and year.
-
-        Name: '/country/c_isocode/{countryIsocode}/year/{yearid}'
-
-        Access: GET /country/c_isocode/{countryIsocode}/year/{yearid}
-            - countryIsocode: String - The iso code of the country.
-            - yearid: int - The year of the data.
-
-        :param countryIsocode: The iso code of the country.
-        :param yearid: The year of the data.
-        :param db: The database session.
-        :return: The data matching the iso code and year.
-      operationId: get_country_by_isocode_and_year_country_c_isocode__countryIsocode__year__yearid__get
+      summary: Energy
+      operationId: energy_country_energy__get
       parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
+      - name: noCountries
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Nocountries
+      - name: yearid
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Yearid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Page
+      - name: inCSV
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Incsv
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_isocode/{countryIsocode}/{yearid}:
-    delete:
-      summary: Delete Country By Isocode And Year
-      description: |-
-        Delete a country by iso code and year.
-
-        Name: '/country/c_isocode/{countryIsocode}/{yearid}'
-
-        Access: DELETE /country/c_isocode/{countryIsocode}/{yearid}
-            - countryIsocode: String - The iso code of the country to be deleted.
-            - yearid: int - The year of the data to be deleted.
-
-        :param countryIsocode: The iso code of the country to be deleted.
-
-        :param yearid: The year of the data to be deleted.
-
-        :param db: The database session.
-
-        :return: Nothing
-      operationId: delete_country_by_isocode_and_year_country_c_isocode__countryIsocode___yearid__delete
-      parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_name/{countryName}/emissions:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/country/climCont/":
     get:
-      summary: Get Country Emissions By Name
-      description: |-
-        Retrieve country emissions by country name.
-
-        Name: '/country/c_name/{countryName}/emissions'
-
-        Access: GET /country/c_name/{countryName}/emissions
-            - countryName: String - The name of the country.
-
-        :param countryName: The name of the country.
-
-        :param db: The database session.
-
-        :return: The emissions for that country.
-      operationId: get_country_emissions_by_name_country_c_name__countryName__emissions_get
+      summary: Climcont
+      operationId: climCont_country_climCont__get
       parameters:
-        - name: countryName
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryname
+      - name: noCountries
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Nocountries
+      - name: yearid
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Yearid
+      - name: pastYears
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Pastyears
+      - name: sort
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Sort
+      - name: inCSV
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Incsv
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_name/{countryName}/emissions/after/{yearid}:
-    get:
-      summary: Get Country Emissions By Name After Year
-      description: |-
-        Retrieve country emissions by country name and year.
-
-        Name: '/country/c_name/{countryName}/emissions/after/{yearid}'
-
-        Access: GET /country/c_name/{countryName}/emissions/after/{yearid}
-            - countryName: String - The name of the country.
-            - yearid: int - The beggining year of the data.
-
-        :param countryName: The name of the country.
-
-        :param yearid: The beggining year of the data.
-
-        :param db: The database session.
-
-        :return: Nothing
-      operationId: get_country_emissions_by_name_after_year_country_c_name__countryName__emissions_after__yearid__get
-      parameters:
-        - name: countryName
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryname
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_isocode/{countryIsocode}/emissions:
-    get:
-      summary: Get Country Emissions By Isocode
-      description: |-
-        Retrieve country emissions by country iso code.
-
-        Name: '/country/c_isocode/{countryIsocode}/emissions'
-
-        Access: GET /country/c_isocode/{countryIsocode}/emissions
-            - countryIsocode: String - The iso code of the country.
-
-        :param countryIsocode: The iso code of the country.
-
-        :param db: The database session.
-
-        :return: Nothing
-      operationId: get_country_emissions_by_isocode_country_c_isocode__countryIsocode__emissions_get
-      parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/c_isocode/{countryIsocode}/emissions/after/{yearid}:
-    get:
-      summary: Get Country Emissions By Isocode After Year
-      description: |-
-        Retrieve country emissions by country iso code and year.
-
-        Name: '/country/c_isocode/{countryIsocode}/emissions/after/{yearid}'
-
-        Access: GET /country/c_isocode/{countryIsocode}/emissions/after/{yearid}
-            - countryIsocode: String - The iso code of the country.
-            - yearid: int - The beggining year of the data.
-
-        :param countryIsocode: The iso code of the country.
-
-        :param yearid: The beggining year of the data.
-
-        :param db: The database session.
-
-        :return: The emissions for that country.
-      operationId: get_country_emissions_by_isocode_after_year_country_c_isocode__countryIsocode__emissions_after__yearid__get
-      parameters:
-        - name: countryIsocode
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Countryisocode
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /country/energyPerCapita/{yearid}:
-    get:
-      summary: Get Energy Per Capita By Year
-      description: |-
-        Retrieve energy per capita by year.
-
-        Name: '/country/energyPerCapita/{yearid}'
-
-        Access: GET /country/energyPerCapita/{yearid}
-            - yearid: int - The year of the data.
-
-        :param yearid: The year of the data.
-
-        :param db: The database session.
-
-        :return: The energy per capita for that year.
-      operationId: get_energy_per_capita_by_year_country_energyPerCapita__yearid__get
-      parameters:
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /countries/climateContribution/{year}:
-    get:
-      summary: Get Climate Contribution By Year
-      description: |-
-        Retrieve climate contribution by year.
-
-        Name: '/countries/climateContribution/{year}'
-
-        Access: GET /countries/climateContribution/{year}
-            - year: int - The year of the data.
-
-        :param year: The year of the data.
-
-        :param n: The number of countries to return.
-
-        :param order: The order of the data.
-
-        :param db: The database session.
-
-        :return: The climate contribution for that year.
-      operationId: get_climate_contribution_by_year_countries_climateContribution__year__get
-      parameters:
-        - name: year
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Year
-        - name: "n"
-          in: query
-          required: true
-          schema:
-            type: integer
-            title: "N"
-        - name: order
-          in: query
-          required: false
-          schema:
-            type: string
-            pattern: ^(asc|desc)$
-            default: asc
-            title: Order
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /countries/climateContribution/previousYears:
-    get:
-      summary: Get Climate Contribution Previous Years
-      description: |-
-        Retrieve climate contribution by year.
-
-        Name: '/countries/climateContribution/previousYears'
-
-        Access: GET /countries/climateContribution/previousYears
-            - m: int - The year of the data.
-            - n: int - The number of countries to return.
-            - order: String - The order of the data.
-
-        :param m: The year of the data.
-
-        :param n: The number of countries to return.
-
-        :param order: The order of the data.
-
-        :param db: The database session.
-
-        :return: The climate contribution for that year.
-      operationId: get_climate_contribution_previous_years_countries_climateContribution_previousYears_get
-      parameters:
-        - name: m
-          in: query
-          required: true
-          schema:
-            type: integer
-            title: M
-        - name: "n"
-          in: query
-          required: true
-          schema:
-            type: integer
-            title: "N"
-        - name: order
-          in: query
-          required: false
-          schema:
-            type: string
-            pattern: ^(asc|desc)$
-            default: asc
-            title: Order
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /continent/temperatureChange:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/continent/temperatureChange":
     get:
       summary: Get Temperature Change By Continent
       description: |-
-        Returns the temperature change by continent
+        Returns the temperature change by continent.
+        Can be filtered for a certain year and later.
 
         Name: "/continent/temperatureChange"
 
-        Acssess: "continent/temperatureChange"
-            - No parameters
-
+        Access: GET continent/temperatureChange
+        - year: Optional[int] - The year of the data.
+        :param continent:
+        :param year:
+        :param inCSV:
         :param db: Database session
         :return: Temperature change by continent
       operationId: get_temperature_change_by_continent_continent_temperatureChange_get
       parameters:
-        - name: args
-          in: query
-          required: true
-          schema:
-            title: Args
+      - name: continent
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Continent
+      - name: year
+        in: query
+        required: false
+        schema:
+          type: integer
+          title: Year
+      - name: inCSV
+        in: query
+        required: false
+        schema:
+          type: string
+          title: Incsv
       responses:
-        "200":
+        '200':
           description: Successful Response
           content:
             application/json:
               schema: {}
-        "422":
+        '422':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /test:
-    get:
-      summary: Test
-      operationId: test_test_get
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-  /continent/temperatureChange/after/{yearid}:
-    get:
-      summary: Get Temperature Change By Continent After Year
-      description: |-
-        Returns the temperature change by continent after a given year
-
-        Name: "/continent/temperatureChange/after/{yearid}"
-
-        Acssess: "continent/temperatureChange/after/{yearid}"
-            - yearid : int - The year after which the temperature change is calculated
-
-        :param yearid: The year after which the temperature change is calculated
-        :param db: Database session
-        :return: Temperature change by continent after a given year
-      operationId: get_temperature_change_by_continent_after_year_continent_temperatureChange_after__yearid__get
-      parameters:
-        - name: yearid
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Yearid
-        - name: args
-          in: query
-          required: true
-          schema:
-            title: Args
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        "422":
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /auth/:
-    get:
-      summary: Get User
-      operationId: get_user_auth__get
-      responses:
-        "200":
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
+                "$ref": "#/components/schemas/HTTPValidationError"
 components:
   schemas:
     CountryDataRequest:
@@ -793,6 +413,9 @@ components:
         nitrous_oxide:
           type: number
           title: Nitrous Oxide
+        share_of_temperature_change_from_ghg:
+          type: number
+          title: Share Of Temperature Change From Ghg
         temperature_change_from_ch4:
           type: number
           title: Temperature Change From Ch4
@@ -810,27 +433,28 @@ components:
           title: Total Ghg
       type: object
       required:
-        - country
-        - year
-        - iso_code
-        - population
-        - gdp
-        - co2
-        - energy_per_capita
-        - energy_per_gdp
-        - methane
-        - nitrous_oxide
-        - temperature_change_from_ch4
-        - temperature_change_from_co2
-        - temperature_change_from_ghg
-        - temperature_change_from_n2o
-        - total_ghg
+      - country
+      - year
+      - iso_code
+      - population
+      - gdp
+      - co2
+      - energy_per_capita
+      - energy_per_gdp
+      - methane
+      - nitrous_oxide
+      - share_of_temperature_change_from_ghg
+      - temperature_change_from_ch4
+      - temperature_change_from_co2
+      - temperature_change_from_ghg
+      - temperature_change_from_n2o
+      - total_ghg
       title: CountryDataRequest
     HTTPValidationError:
       properties:
         detail:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            "$ref": "#/components/schemas/ValidationError"
           type: array
           title: Detail
       type: object
@@ -840,8 +464,8 @@ components:
         loc:
           items:
             anyOf:
-              - type: string
-              - type: integer
+            - type: string
+            - type: integer
           type: array
           title: Location
         msg:
@@ -852,7 +476,7 @@ components:
           title: Error Type
       type: object
       required:
-        - loc
-        - msg
-        - type
+      - loc
+      - msg
+      - type
       title: ValidationError
