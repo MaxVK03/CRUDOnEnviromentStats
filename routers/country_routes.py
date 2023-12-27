@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from Database.database_utils import get_db
+from dataManagement.database_utils import get_db
 from services import country_service, converter
-from models import CountryDataRequest
+from dataManagement.models import CountryDataRequest
 
 router = APIRouter()
 db_dependency = Depends(get_db)

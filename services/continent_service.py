@@ -1,9 +1,12 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import load_only
+# TODO: Read through the DB and Delete irrelevant columns.
+# TODO: Double check all the error codes.
+from dataManagement.models import CountryData
 
-from models import CountryData
 
-
+# TODO: double check this is returning the right parameters.
+# Gets the temp changes for all of the continents.
 def get_temperature_change_by_continent(db):
     result = db.query(CountryData).filter(CountryData.country.in_(
         ["Africa", "Asia", "North America", "South America", "Oceania", "Europe", "Antarctica"])
@@ -13,8 +16,8 @@ def get_temperature_change_by_continent(db):
     return result
 
 
-#TODO This one can be combined with the one above, using optional path parameters.
-#TODO Add the ShareOfTemperature...
+# TODO: rewrite the function to combine this and one above using style from the country services.
+# TODO Add the ShareOfTemperature...
 def get_temperature_change_by_continent_or_after_year(db, yearid):
     result = db.query(CountryData).filter(
         CountryData.year > yearid,
@@ -31,4 +34,3 @@ def get_temperature_change_by_continent_or_after_year(db, yearid):
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
-

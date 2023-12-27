@@ -1,4 +1,4 @@
-from Database.database import SessionLocal
+from dataManagement.database import SessionLocal
 from fastapi import Depends
 
 
