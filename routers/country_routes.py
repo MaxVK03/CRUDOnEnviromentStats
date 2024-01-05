@@ -150,7 +150,6 @@ def energy(noCountries: int = None,
 
 
 @router.get("/country/climCont/")
-<<<<<<< HEAD
 def climCont(
     noCountries: int = None,
     yearid: int = None,
@@ -175,14 +174,6 @@ def climCont(
                     pastYears=pastYears,
                     sort=sort
                 )
-=======
-def climCont(noCountries: int = None,
-             yearid: int = None, db=db_dependency, sort: str = None, inCSV:str = None):
-    result = None
-    if noCountries and yearid and sort:
-        result = country_service.getClimCont(db=db, noCountries=noCountries, year=yearid, sort=sort)
->>>>>>> develop
-
     if inCSV is not None:
         return converter.csvSender(result)
     else:
