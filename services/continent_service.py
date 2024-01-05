@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import load_only
-
-from models import CountryData
+from dataManagement.models import CountryData
+# TODO: Read through the DB and Delete irrelevant columns.
+# TODO: Double check all the error codes.
 
 
 def get_temperature_change_by_continent(db, continent):
@@ -21,6 +22,7 @@ def get_temperature_change_by_continent(db, continent):
     return result
 
 
+# TODO: rewrite the function to combine this and one above using style from the country services.
 def get_temperature_change_continent_after_year(
         db, continent, yearid, inCSV):
     result = db.query(CountryData).filter(

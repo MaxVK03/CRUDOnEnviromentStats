@@ -1,11 +1,11 @@
-import io
-
 from fastapi import HTTPException
 from sqlalchemy import asc, desc
 from sqlalchemy.orm import load_only
-from models import CountryData
+from dataManagement.models import CountryData
 
 
+# Gets all country data given a country name, a time frame and a year.
+# The time frame part allows specification for before, after or equal to a specific year.
 def query_country_data(db, model_field_name, value, yearid, timeFrame):
     model_field = getattr(CountryData, model_field_name)
     year_field = CountryData.year
@@ -26,13 +26,19 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
         return db.query(CountryData).filter(model_field == value).all()
 
 
-def handle_not_found(result):
+# TODO: See if possible to make more powerful.
+# A Helper function for when a result cannot be found. Returns the appropriate HTTP response code
+# Indicating the searched for item has not been found.
+def handle_not_found(result, opType):
     if not result:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
 
-# Below are all gets
+# A function for getting country data with the time frame. Makes use of the query country data function as it is a
+# repeated function throughout the code
+# The time frame part allows specification for before, after or equal to a specific year.
+# Allows for Country name or ISO code depending on how the function is called.
 def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
 
     field = 'country' if countryName else 'iso_code'
@@ -40,6 +46,8 @@ def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
     return query_country_data(db, field, value, yearid, timeFrame)
 
 
+# Function for getting country data without the time frame. Works the same as the function above.
+# Allows for Country name or ISO code depending on how the function is called.
 def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
@@ -47,6 +55,9 @@ def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
     return result
 
 
+# Gets the country emission fields when provided a time frame.
+# Allows for Country name or ISO code depending on how the function is called.
+# The time frame part allows specification for before, after or equal to a specific year.
 def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
@@ -82,9 +93,10 @@ def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame)
                 CountryData.nitrous_oxide,
                 CountryData.total_ghg)
         ).all()
-    return handle_not_found(result)
+    return handle_not_found(result, "get")
 
 
+# Gets all emission related data for a country when provided the name of the country.
 def get_country_emissions_by_name(db, countryName):
     result = db.query(CountryData).filter(CountryData.country == countryName).options(
         load_only(
@@ -95,10 +107,12 @@ def get_country_emissions_by_name(db, countryName):
             CountryData.nitrous_oxide,
             CountryData.total_ghg)
     ).all()
-    return handle_not_found(result)
+    return handle_not_found(result, "get")
 
 
-# Below are all deletes
+# TODO: Add the required message if the country is not found.
+# Deletes the country data when given the country name.
+# The time frame parameter allows specification for before, after or equal to a specific year.
 def delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, timeFrame):
     result = query_country_data(db, 'country', countryName, yearid, timeFrame)
     db.delete(result)
@@ -106,6 +120,7 @@ def delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, 
 
 
 # Other CRUD operations
+# Creates a country data item for the provided year with the provided data.
 def create_country_data(db, country_data_request):
     new_country_data = CountryData(**country_data_request.dict())
     db.add(new_country_data)
@@ -114,10 +129,17 @@ def create_country_data(db, country_data_request):
     return new_country_data
 
 
-def update_country_data_by_name(db, country_name, updated_data):
-    existing_data = db.query(CountryData).filter(CountryData.country == country_name).first()
+# TODO: Once have wifi check if this must be for a specific year. Makes sense it should be.
+# Retrieves a country and then uses the provided data to update the country data for that year.
+# Can retrieve the data by either the country name or the countries ISO code.
+def update_country(db, countryName, iso, updated_data):
+    field = 'country' if countryName else 'iso_code'
+    value = countryName or iso
+    existing_data = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
+
     if not existing_data:
         raise HTTPException(status_code=404, detail='Item not found')
+
     for key, value in updated_data.dict().items():
         setattr(existing_data, key, value)
     db.commit()
@@ -128,17 +150,6 @@ def update_country_data_by_name(db, country_name, updated_data):
 def get_all_data(db):
     result = db.query(CountryData).all()
     return result
-
-
-def update_country_data_by_isocode(db, countryIsocode, countrydt):
-    existing_data = db.query(CountryData).filter(CountryData.iso_code == countryIsocode).first()
-    if not existing_data:
-        raise HTTPException(status_code=404, detail='Item not found')
-    for key, value in countrydt.dict().items():
-        setattr(existing_data, key, value)
-    db.commit()
-    db.refresh(existing_data)
-    return existing_data
 
 
 def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
@@ -155,11 +166,11 @@ def getClimContYear(db, noCountries, year, sort):
     if sort == 'bottom' and noCountries >= 1 and year >= 1:
         result = db.query(CountryData).filter(CountryData.year == year).order_by(
             asc(CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
-        return handle_not_found(result)
+        return handle_not_found(result, "get")
     elif sort == 'top' and noCountries >= 1 and year >= 1:
         result = db.query(CountryData).filter(CountryData.year == year).order_by(desc(
             CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
-        return handle_not_found(result)
+        return handle_not_found(result, "get")
     else:
         return 'Invalid parameters.'
 
@@ -174,7 +185,7 @@ def getClimContPast(db, noCountries, pastYears, sort):
             .limit(noCountries)
             .all()
         )
-        return handle_not_found(result)
+        return handle_not_found(result, "get")
     elif sort == 'top' and noCountries >= 1 and pastYears >= 1:
         result = (
             db.query(CountryData)
@@ -183,11 +194,13 @@ def getClimContPast(db, noCountries, pastYears, sort):
             .limit(noCountries)
             .all()
         )
-        return handle_not_found(result)
+        return handle_not_found(result, "get")
     else:
         return 'Invalid parameters.'
 
 
+# Gets the energy data for a provided year with paging support. If there is no provided page number then just returns
+# the first page otherwise will return the requested page.
 def getEnergy(db, page, noCountries, year):
     # Set a default page number if page is None
     if page is None:
@@ -205,5 +218,4 @@ def getEnergy(db, page, noCountries, year):
             CountryData.energy_per_capita)
     ).filter(CountryData.year == year).offset(offset_value).limit(noCountries).all()
 
-    return handle_not_found(result)
-    # return handle_not_found(result)
+    return handle_not_found(result, "get")
