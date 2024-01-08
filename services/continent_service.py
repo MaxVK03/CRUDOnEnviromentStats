@@ -1,13 +1,24 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import load_only
 from dataManagement.models import CountryData
+
+
 # TODO: Read through the DB and Delete irrelevant columns.
 # TODO: Double check all the error codes.
+
+# Function that is called before return the query result.
+# If the query return is empty, a HTTP error is raised.
+def handle_not_found(result, opType):
+    if result == []:
+        raise HTTPException(status_code=404, detail='Item not found, invalid search')
+    elif result is None:
+        raise HTTPException(status_code=404, detail='Item not found')
+    return result
 
 
 def get_temperature_change_by_continent(db, continent):
     result = db.query(CountryData).filter(
-            CountryData.country == continent
+        CountryData.country == continent
     ).options(
         load_only(CountryData.country,
                   CountryData.year,

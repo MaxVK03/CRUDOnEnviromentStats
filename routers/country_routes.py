@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from dataManagement.database_utils import get_db
 from services import country_service, converter
 from dataManagement.models import CountryDataRequest
@@ -23,11 +23,7 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
     :param countryName:
     :param db: The database session.
     :return: Country data based on the provided criteria.
-
-
     """
-
-    result = None
     if countryName and yearid and timeFrame:
         result = country_service.get_country_data_with_timeFrame(db=db, countryName=countryName, iso=None,
                                                                  yearid=yearid,
@@ -44,12 +40,12 @@ async def get_country_data(countryName: str = None, countryIsocode: str = None,
         result = country_service.get_country_data_without_timeFrame(db=db, countryName=None, iso=countryIsocode,
                                                                     yearid=None, timeFrame=None)
     else:
-        return 'Invalid parameters.'
+        raise HTTPException(status_code=400, detail='Invalid parameters')
 
     if inCSV is not None:
         return converter.csvSender(result)
     else:
-        return result
+        return country_service.handle_not_found(result, "get")
 
 
 @router.post("/country")
@@ -100,7 +96,7 @@ async def delete_country(countryName: str = None, countryIsocode: str = None,
     elif countryIsocode and yearid and timeFrame:
         return country_service.delete_country_data_by_isocode_and_year(db, countryIsocode, yearid)
     else:
-        return 'Invalid parameters.'
+        raise HTTPException(status_code=404, detail='Invalid Parameters')
 
 
 @router.get("/country/emissions")
@@ -127,6 +123,8 @@ async def get_country_emissions(countryName: str = None, countryIsocode: str = N
                                                                    yearid=yearid, timeFrame=timeFrame)
     elif countryName:
         result = country_service.get_country_emissions_by_name(db=db, countryName=countryName)
+    else:
+        raise HTTPException(status_code=404, detail='Invalid parameters')
 
     # Convert to CSV if requested:
     if inCSV is not None:
@@ -137,16 +135,16 @@ async def get_country_emissions(countryName: str = None, countryIsocode: str = N
 
 # energy per capita and gdp
 @router.get("/country/energy/")
-def energy(noCountries: int = None,
+def energy(numCountries: int = None,
            yearid: int = None, page: int = None, inCSV:str = None, db=db_dependency):
     result = None
-    if noCountries and yearid:
-        result = country_service.getEnergy(db=db, page=page, noCountries=noCountries, year=yearid)
+    if numCountries and yearid:
+        result = country_service.getEnergy(db=db, page=page, noCountries=numCountries, year=yearid)
 
     if inCSV is not None:
         return converter.csvSender(result)
     else:
-        return result
+        return country_service.handle_not_found(result, "GET")
 
 
 @router.get("/country/climCont/")

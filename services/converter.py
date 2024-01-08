@@ -1,7 +1,10 @@
 import io
 import csv
 
-
+"""
+Helper function that converts the standard JSON result into CSV values. 
+This function is called when the user requests for CSV. 
+"""
 def csvSender(result):
     if not result:
         return ""

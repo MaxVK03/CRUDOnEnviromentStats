@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from dataManagement.database_utils import get_db
 from services import continent_service, converter
 # TODO: figure out the sample response and input stuff.
@@ -39,9 +39,8 @@ async def get_temperature_change_by_continent(
     :return: Temperature change by continent
     """
     if continent.lower() not in VALID_CONTINENTS:
-        return "Not a continent!"
+        raise HTTPException(status_code=400, detail='Not a valid continent')
 
-    result = None
     if continent and year:
         result = continent_service.get_temperature_change_continent_after_year(
                 db=db,
@@ -53,9 +52,9 @@ async def get_temperature_change_by_continent(
                 db=db,
                 continent=continent)
     else:
-        return 'Invalid parameters.'
+        raise HTTPException(status_code=400, detail='Bad request')
 
     if inCSV is not None:
         return converter.csvSender(result)
     else:
-        return result
+        return continent_service.handle_not_found(result, "Get");

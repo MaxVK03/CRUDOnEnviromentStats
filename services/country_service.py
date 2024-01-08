@@ -30,7 +30,9 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
 # A Helper function for when a result cannot be found. Returns the appropriate HTTP response code
 # Indicating the searched for item has not been found.
 def handle_not_found(result, opType):
-    if not result:
+    if result == []:
+        raise HTTPException(status_code=404, detail='Item not found, invalid search')
+    elif result is None:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
