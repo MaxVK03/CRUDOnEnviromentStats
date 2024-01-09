@@ -19,9 +19,9 @@ VALID_CONTINENTS = {
 
 @router.get("/continent/temperatureChange")
 async def get_temperature_change_by_continent(
-        continent: str = None,
-        year: int = None,
-        inCSV: str = None,
+        continent: str = "",
+        year: str = "",
+        inCSV: str = "",
         db=db_dependency
         ):
     """
@@ -38,6 +38,8 @@ async def get_temperature_change_by_continent(
     :param db: Database session
     :return: Temperature change by continent
     """
+    if year and not year.isdigit():
+        raise HTTPException(status_code=400, detail='Not a valid year')
     if continent.lower() not in VALID_CONTINENTS:
         raise HTTPException(status_code=400, detail='Not a valid continent')
 
@@ -45,7 +47,7 @@ async def get_temperature_change_by_continent(
         result = continent_service.get_temperature_change_continent_after_year(
                 db=db,
                 continent=continent,
-                yearid=year,
+                yearid=int(year),
                 inCSV=inCSV)
     elif continent:
         result = continent_service.get_temperature_change_by_continent(
@@ -54,7 +56,7 @@ async def get_temperature_change_by_continent(
     else:
         raise HTTPException(status_code=400, detail='Bad request')
 
-    if inCSV is not None:
+    if inCSV:
         return converter.csvSender(result)
     else:
         return continent_service.handle_not_found(result, "Get");
