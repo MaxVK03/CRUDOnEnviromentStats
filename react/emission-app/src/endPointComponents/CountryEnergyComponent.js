@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import api from '../api'; // Ensure this points to your API configuration
+import api from '../api';
 
 const FetchCountryEnergyComponent = () => {
-    const [params, setParams] = useState({
-        noCountries: '',
-        yearid: '',
-        page: '',
-        inCSV: false
-    });
+    const [numCountries, setNoCountries] = useState('');
+    const [yearid, setYearid] = useState('');
+    const [page, setPage] = useState('');
+    const [inCSV, setInCSV] = useState(false);
     const [energyData, setEnergyData] = useState(null);
-
-    const handleInputChange = (e) => {
-        setParams({ ...params, [e.target.name]: e.target.value });
-    };
-
-    const handleCheckboxChange = (e) => {
-        setParams({ ...params, inCSV: e.target.checked });
-    };
 
     const fetchEnergyData = async () => {
         try {
-            const response = await api.get('/country/energy/', { params });
+            const response = await api.get('/country/energy/', { 
+                params: {
+                    numCountries: numCountries ? parseInt(numCountries) : null,
+                    yearid: yearid ? parseInt(yearid) : null,
+                    page: page ? parseInt(page) : null,
+                    inCSV
+                }
+            });
             setEnergyData(response.data);
         } catch (error) {
             console.error('Error fetching energy data:', error);
+            setEnergyData(error.response)
         }
     };
 
@@ -33,30 +31,27 @@ const FetchCountryEnergyComponent = () => {
             <div>
                 <input
                     type="number"
-                    name="noCountries"
-                    value={params.noCountries}
-                    onChange={handleInputChange}
+                    value={numCountries}
+                    onChange={(e) => setNoCountries(e.target.value)}
                     placeholder="Number of Countries"
                 />
                 <input
                     type="number"
-                    name="yearid"
-                    value={params.yearid}
-                    onChange={handleInputChange}
+                    value={yearid}
+                    onChange={(e) => setYearid(e.target.value)}
                     placeholder="Year ID"
                 />
                 <input
                     type="number"
-                    name="page"
-                    value={params.page}
-                    onChange={handleInputChange}
+                    value={page}
+                    onChange={(e) => setPage(e.target.value)}
                     placeholder="Page"
                 />
                 <label>
                     <input
                         type="checkbox"
-                        checked={params.inCSV}
-                        onChange={handleCheckboxChange}
+                        checked={inCSV}
+                        onChange={(e) => setInCSV(e.target.checked)}
                     />
                     in CSV
                 </label>

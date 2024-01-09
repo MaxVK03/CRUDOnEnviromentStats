@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api'; // Ensure this is the correct path to your api configuration
+import api from '../api';
 
 const CountryDataComponent = () => {
     const [countryName, setCountryName] = useState('');
@@ -15,15 +15,15 @@ const CountryDataComponent = () => {
                 params: {
                     countryName,
                     countryIsocode,
-                    yearid: yearid ? parseInt(yearid) : undefined,
-                    timeFrame,
-                    inCSV: inCSV ? 'true' : undefined
+                    yearid: yearid ? parseInt(yearid) : null,
+                    timeFrame: timeFrame === '' ? null : timeFrame,
+                    inCSV
                 }
             });
             setCountryData(response.data);
         } catch (error) {
             console.error('Error fetching country data:', error);
-            setCountryData(null);
+            setCountryData(error.response);
         }
     };
 
@@ -63,7 +63,6 @@ const CountryDataComponent = () => {
                 in CSV
             </label>
             <button onClick={fetchCountryData}>Fetch Data</button>
-
             {countryData && <pre>{JSON.stringify(countryData, null, 2)}</pre>}
         </div>
     );

@@ -3,39 +3,20 @@ from sqlalchemy.orm import load_only
 from dataManagement.models import CountryData
 
 
-# TODO: Read through the DB and Delete irrelevant columns.
 # TODO: Double check all the error codes.
+# TODO: use opType in handle_no_found or remove it.
 
 # Function that is called before return the query result.
 # If the query return is empty, a HTTP error is raised.
 def handle_not_found(result, opType):
     if result == []:
-        raise HTTPException(status_code=404, detail='Item not found, invalid search')
+        raise HTTPException(status_code=404, detail='No items found matching query')
     elif result is None:
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
-
-def get_temperature_change_by_continent(db, continent):
-    result = db.query(CountryData).filter(
-        CountryData.country == continent
-    ).options(
-        load_only(CountryData.country,
-                  CountryData.year,
-                  CountryData.share_of_temperature_change_from_ghg,
-                  CountryData.temperature_change_from_ch4,
-                  CountryData.temperature_change_from_co2,
-                  CountryData.temperature_change_from_n2o,
-                  CountryData.temperature_change_from_ghg
-                  )).all()
-    if not result:
-        raise HTTPException(status_code=404, detail='Item not found')
-    return result
-
-
-# TODO: rewrite the function to combine this and one above using style from the country services.
-def get_temperature_change_continent_after_year(
-        db, continent, yearid, inCSV):
+# Get the temperature change data for a given continent from the database.
+def get_temperature_change_by_continent(db, continent, yearid):
     result = db.query(CountryData).filter(
         CountryData.year >= yearid,
         CountryData.country == continent
@@ -48,6 +29,4 @@ def get_temperature_change_continent_after_year(
                   CountryData.temperature_change_from_n2o,
                   CountryData.temperature_change_from_ghg
                   )).all()
-    if not result:
-        raise HTTPException(status_code=404, detail='Item not found')
-    return result
+    return handle_not_found(result, "get")

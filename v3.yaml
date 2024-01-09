@@ -1,0 +1,658 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/country/data": {
+            "get": {
+                "summary": "Get Country Data",
+                "description": "**Returns* country data based on various criteria.\nCountry can be queried by name or ISO-code (will take name over ISO code if both are provided)\nA time-frame for the data can be specified.\nData format defaults to JSON, can be in CSV.\n\n**Name*: \"/country/data\"\n\n**Access*: GET /country/data\n\n**Query parameters**:\n- **countryName**: Optional[str] - The name of the country.\n- **countryIsocode**: Optional[str] - The iso code of the country.\n- **yearid**: Optional[int] - The year of the data.\n- **timeframe**: Optional[string] - The time frame (defaults to \"after\")\n- **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.\n- **return**: Country data based on the provided criteria.",
+                "operationId": "get_country_data_country_data_get",
+                "parameters": [
+                    {
+                        "name": "countryName",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryname"
+                        }
+                    },
+                    {
+                        "name": "countryIsocode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryisocode"
+                        }
+                    },
+                    {
+                        "name": "yearid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Yearid"
+                        }
+                    },
+                    {
+                        "name": "timeFrame",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "after",
+                            "title": "Timeframe"
+                        }
+                    },
+                    {
+                        "name": "inCSV",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false,
+                            "title": "Incsv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/country": {
+            "post": {
+                "summary": "Create Country",
+                "description": "Create a new country to add to the database.\nAccess: POST /country\n:param countrydt: The country data to be added.\n:param db: The database session.\n:return: Result of the creation operation.",
+                "operationId": "create_country_country_post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CountryDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update Country",
+                "description": "Update country data by name or iso code.\nAccess: PUT /country\n:param countryName: Optional[str] - The name of the country.\n:param countryIsocode: Optional[str] - The iso code of the country.\n:param countrydt: A country data request object containing the data to be updated.\n:param db: The database session.\n:return: Result of the update operation.",
+                "operationId": "update_country_country_put",
+                "parameters": [
+                    {
+                        "name": "countryName",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryname"
+                        }
+                    },
+                    {
+                        "name": "countryIsocode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryisocode"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CountryDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Country",
+                "description": "Delete a country by name, iso code, and/or year.\nAccess: DELETE /country\n:param timeFrame:\n:param countryName: Optional[str] - The name of the country.\n:param countryIsocode: Optional[str] - The iso code of the country.\n:param yearid: Optional[int] - The year of the data (defaults to \"equal\").\n:param db: The database session.\n:return: Result of the deletion operation.",
+                "operationId": "delete_country_country_delete",
+                "parameters": [
+                    {
+                        "name": "countryName",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryname"
+                        }
+                    },
+                    {
+                        "name": "countryIsocode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryisocode"
+                        }
+                    },
+                    {
+                        "name": "yearid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Yearid"
+                        }
+                    },
+                    {
+                        "name": "timeFrame",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "equal",
+                            "title": "Timeframe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/country/emissions": {
+            "get": {
+                "summary": "Get Country Emissions",
+                "description": "Retrieve country emissions data based on various criteria.\nAccess: GET /country/emissions\n:param inCSV:\n:param timeFrame:\n:param countryName: Optional[str] - The name of the country.\n:param countryIsocode: Optional[str] - The iso code of the country.\n:param yearid: Optional[int] - The year of the data.\n:param db: The database session.\n:return: Emissions data based on the provided criteria.",
+                "operationId": "get_country_emissions_country_emissions_get",
+                "parameters": [
+                    {
+                        "name": "countryName",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryname"
+                        }
+                    },
+                    {
+                        "name": "countryIsocode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Countryisocode"
+                        }
+                    },
+                    {
+                        "name": "yearid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Yearid"
+                        }
+                    },
+                    {
+                        "name": "timeFrame",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "after",
+                            "title": "Timeframe"
+                        }
+                    },
+                    {
+                        "name": "inCSV",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false,
+                            "title": "Incsv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/country/energy/": {
+            "get": {
+                "summary": "Energy",
+                "operationId": "energy_country_energy__get",
+                "parameters": [
+                    {
+                        "name": "numCountries",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Numcountries"
+                        }
+                    },
+                    {
+                        "name": "yearid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Yearid"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Page"
+                        }
+                    },
+                    {
+                        "name": "inCSV",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false,
+                            "title": "Incsv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/country/climCont/": {
+            "get": {
+                "summary": "Climcont",
+                "operationId": "climCont_country_climCont__get",
+                "parameters": [
+                    {
+                        "name": "noCountries",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Nocountries"
+                        }
+                    },
+                    {
+                        "name": "yearid",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Yearid"
+                        }
+                    },
+                    {
+                        "name": "pastYears",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Pastyears"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "top",
+                            "title": "Sort"
+                        }
+                    },
+                    {
+                        "name": "inCSV",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false,
+                            "title": "Incsv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/continent/temperatureChange": {
+            "get": {
+                "summary": "Get Temperature Change By Continent",
+                "description": "**Returns** the temperature change by continent.\nCan be filtered for a certain year and later.\nData format defaults to JSON, can be in CSV.\n\n**Name**: \"/continent/temperatureChange\"\n\n**Access**: GET continent/temperatureChange\n\n**Query parameters**:\n- **continent**: [str] - The continent to find the data for.\n- **year**: Optional[int] - The year of the data (defaults to all data).\n- **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.\n- **return**: Continent data based on the provided criteria.",
+                "operationId": "get_temperature_change_by_continent_continent_temperatureChange_get",
+                "parameters": [
+                    {
+                        "name": "continent",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "title": "Continent"
+                        }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Year"
+                        }
+                    },
+                    {
+                        "name": "inCSV",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false,
+                            "title": "Incsv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CountryDataRequest": {
+                "properties": {
+                    "country": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "title": "Country"
+                    },
+                    "year": {
+                        "type": "integer",
+                        "title": "Year",
+                        "max": 9999,
+                        "min": 0
+                    },
+                    "iso_code": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "minLength": 1,
+                        "title": "Iso Code"
+                    },
+                    "population": {
+                        "type": "integer",
+                        "title": "Population"
+                    },
+                    "gdp": {
+                        "type": "number",
+                        "title": "Gdp"
+                    },
+                    "co2": {
+                        "type": "number",
+                        "title": "Co2"
+                    },
+                    "energy_per_capita": {
+                        "type": "number",
+                        "title": "Energy Per Capita"
+                    },
+                    "energy_per_gdp": {
+                        "type": "number",
+                        "title": "Energy Per Gdp"
+                    },
+                    "methane": {
+                        "type": "number",
+                        "title": "Methane"
+                    },
+                    "nitrous_oxide": {
+                        "type": "number",
+                        "title": "Nitrous Oxide"
+                    },
+                    "share_of_temperature_change_from_ghg": {
+                        "type": "number",
+                        "title": "Share Of Temperature Change From Ghg"
+                    },
+                    "temperature_change_from_ch4": {
+                        "type": "number",
+                        "title": "Temperature Change From Ch4"
+                    },
+                    "temperature_change_from_co2": {
+                        "type": "number",
+                        "title": "Temperature Change From Co2"
+                    },
+                    "temperature_change_from_ghg": {
+                        "type": "number",
+                        "title": "Temperature Change From Ghg"
+                    },
+                    "temperature_change_from_n2o": {
+                        "type": "number",
+                        "title": "Temperature Change From N2O"
+                    },
+                    "total_ghg": {
+                        "type": "number",
+                        "title": "Total Ghg"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "country",
+                    "year",
+                    "iso_code",
+                    "population",
+                    "gdp",
+                    "co2",
+                    "energy_per_capita",
+                    "energy_per_gdp",
+                    "methane",
+                    "nitrous_oxide",
+                    "share_of_temperature_change_from_ghg",
+                    "temperature_change_from_ch4",
+                    "temperature_change_from_co2",
+                    "temperature_change_from_ghg",
+                    "temperature_change_from_n2o",
+                    "total_ghg"
+                ],
+                "title": "CountryDataRequest"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

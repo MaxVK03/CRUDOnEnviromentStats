@@ -13,8 +13,8 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
     yearid = int(yearid) if yearid is not None else None
 
     timeFrame_conditions = {
-        'before': year_field < yearid,
-        'after': year_field > yearid,
+        'before': year_field <= yearid,
+        'after': year_field >= yearid,
         'equal': year_field == yearid
     }
 
@@ -50,7 +50,7 @@ def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
 
 # Function for getting country data without the time frame. Works the same as the function above.
 # Allows for Country name or ISO code depending on how the function is called.
-def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
+def get_country_data_without_timeFrame(db, countryName, iso):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
     result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
@@ -63,12 +63,11 @@ def get_country_data_without_timeFrame(db, countryName, iso, yearid, timeFrame):
 def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
-    yearid = int(yearid) if yearid is not None else None
     year_field = CountryData.year
 
     timeFrame_conditions = {
-        'before': year_field < yearid,
-        'after': year_field > yearid,
+        'before': year_field <= yearid,
+        'after': year_field >= yearid,
         'equal': year_field == yearid
     }
 
@@ -99,17 +98,30 @@ def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame)
 
 
 # Gets all emission related data for a country when provided the name of the country.
-def get_country_emissions_by_name(db, countryName):
-    result = db.query(CountryData).filter(CountryData.country == countryName).options(
-        load_only(
-            CountryData.year,
-            CountryData.country,
-            CountryData.co2,
-            CountryData.methane,
-            CountryData.nitrous_oxide,
-            CountryData.total_ghg)
-    ).all()
-    return handle_not_found(result, "get")
+def get_country_emissions_by_name(db, countryName, iso):
+    if countryName:
+        result = db.query(CountryData).filter(CountryData.country == countryName).options(
+            load_only(
+                CountryData.year,
+                CountryData.country,
+                CountryData.co2,
+                CountryData.methane,
+                CountryData.nitrous_oxide,
+                CountryData.total_ghg)
+        ).all()
+        return handle_not_found(result, "get")
+    else:
+        result = db.query(CountryData).filter(CountryData.iso_code == iso).options(
+            load_only(
+                CountryData.year,
+                CountryData.country,
+                CountryData.co2,
+                CountryData.methane,
+                CountryData.nitrous_oxide,
+                CountryData.total_ghg)
+        ).all()
+        return handle_not_found(result, "get")
+
 
 
 # TODO: Add the required message if the country is not found.
