@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from dataManagement.database_utils import get_db
 from services import continent_service, converter
 
@@ -43,10 +44,10 @@ async def get_temperature_change_by_continent(
         raise HTTPException(status_code=400, detail="Not a valid continent")
 
     result = continent_service.get_temperature_change_by_continent(
-        db=db, continent=continent.title(), yearid=year if year else 0
+        db=db, continent=continent.title(), yearid=year if year else -1
     )
 
     if inCSV:
-        return converter.csvSender(result)
+        return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return result

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from dataManagement.database_utils import get_db
 from services import country_service, converter
 from dataManagement.models import CountryDataRequest
@@ -47,7 +48,7 @@ async def get_country_data(
         raise HTTPException(status_code=400, detail="Invalid parameters")
 
     if inCSV:
-        return converter.csvSender(result)
+        return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return country_service.handle_not_found(result, "get")
 
@@ -154,7 +155,7 @@ async def get_country_emissions(
 
     # Convert to CSV if requested:
     if inCSV:
-        return converter.csvSender(result)
+        return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         print(result)
         return country_service.handle_not_found(result, "get")
@@ -176,7 +177,7 @@ def energy(
         )
 
     if inCSV:
-        return converter.csvSender(result)
+        return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return result
 
@@ -201,6 +202,6 @@ def climCont(
                 db=db, noCountries=noCountries, pastYears=pastYears, sort=sort
             )
     if inCSV:
-        return converter.csvSender(result)
+        return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return result
