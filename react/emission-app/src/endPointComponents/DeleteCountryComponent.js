@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api'; // Make sure this points to your API configuration
+import api from '../api';
 
 const DeleteCountryComponent = () => {
     const [deleteParams, setDeleteParams] = useState({

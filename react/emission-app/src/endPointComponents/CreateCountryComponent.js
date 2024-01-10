@@ -20,6 +20,7 @@ const CreateCountryComponent = () => {
         temperature_change_from_n2o: '',
         total_ghg: ''
     });
+    const [responseCode, setResponseCode] = useState(null); // New state for storing response code
 
     const handleInputChange = (e) => {
         setCountryData({ ...countryData, [e.target.name]: e.target.value });
@@ -29,8 +30,10 @@ const CreateCountryComponent = () => {
         e.preventDefault();
         try {
             const response = await api.post('/country', countryData);
+            setResponseCode(response.status); // Set response code on successful submission
             console.log(response.data); // Handle the response appropriately
         } catch (error) {
+            setResponseCode(error.response ? error.response.status : 500); // Set error code if submission fails
             console.error('Error creating country data:', error);
         }
     };
@@ -53,6 +56,7 @@ const CreateCountryComponent = () => {
                 ))}
                 <button type="submit">Submit</button>
             </form>
+            {responseCode !== null && <p>Response Code: {responseCode}</p>} {/* Display response code */}
         </div>
     );
 };

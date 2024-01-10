@@ -15,6 +15,7 @@ def handle_not_found(result, opType):
         raise HTTPException(status_code=404, detail='Item not found')
     return result
 
+
 # Get the temperature change data for a given continent from the database.
 def get_temperature_change_by_continent(db, continent, yearid):
     result = db.query(CountryData).filter(

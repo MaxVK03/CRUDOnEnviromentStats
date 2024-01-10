@@ -1,65 +1,77 @@
 import React, { useState } from 'react';
-import api from '../api';
+import api from '../api'; // Make sure this points to your API configuration
 
-const FetchCountryEnergyComponent = () => {
-    const [numCountries, setNoCountries] = useState('');
-    const [yearid, setYearid] = useState('');
-    const [page, setPage] = useState('');
-    const [inCSV, setInCSV] = useState(false);
+const FetchEnergyDataComponent = () => {
+    const [queryParams, setQueryParams] = useState({
+        numCountries: '',
+        yearid: '',
+        page: '',
+        inCSV: false
+    });
     const [energyData, setEnergyData] = useState(null);
+    const [responseCode, setResponseCode] = useState(null);
 
-    const fetchEnergyData = async () => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setQueryParams({ ...queryParams, [name]: value });
+    };
+
+    const handleCheckboxChange = (e) => {
+        setQueryParams({ ...queryParams, inCSV: e.target.checked });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const response = await api.get('/country/energy/', { 
-                params: {
-                    numCountries: numCountries ? parseInt(numCountries) : null,
-                    yearid: yearid ? parseInt(yearid) : null,
-                    page: page ? parseInt(page) : null,
-                    inCSV
-                }
-            });
+            const response = await api.get('/country/energy/', { params: queryParams });
+            setResponseCode(response.status);
             setEnergyData(response.data);
         } catch (error) {
+            setResponseCode(error.response ? error.response.status : 500);
             console.error('Error fetching energy data:', error);
-            setEnergyData(error.response)
         }
     };
 
     return (
         <div>
-            <h2>Fetch Country Energy Data</h2>
-            <div>
+            <h2>Fetch Energy Data</h2>
+            <form onSubmit={handleSubmit}>
                 <input
                     type="number"
-                    value={numCountries}
-                    onChange={(e) => setNoCountries(e.target.value)}
+                    name="numCountries"
+                    value={queryParams.numCountries}
+                    onChange={handleInputChange}
                     placeholder="Number of Countries"
                 />
                 <input
                     type="number"
-                    value={yearid}
-                    onChange={(e) => setYearid(e.target.value)}
+                    name="yearid"
+                    value={queryParams.yearid}
+                    onChange={handleInputChange}
                     placeholder="Year ID"
                 />
                 <input
                     type="number"
-                    value={page}
-                    onChange={(e) => setPage(e.target.value)}
-                    placeholder="Page"
+                    name="page"
+                    value={queryParams.page}
+                    onChange={handleInputChange}
+                    placeholder="Page Number"
                 />
                 <label>
                     <input
                         type="checkbox"
-                        checked={inCSV}
-                        onChange={(e) => setInCSV(e.target.checked)}
+                        name="inCSV"
+                        checked={queryParams.inCSV}
+                        onChange={handleCheckboxChange}
                     />
-                    in CSV
+                    Download as CSV
                 </label>
-                <button onClick={fetchEnergyData}>Fetch Data</button>
-            </div>
+                <button type="submit">Fetch Data</button>
+            </form>
+            {responseCode !== null && <p>Response Code: {responseCode}</p>}
             {energyData && <pre>{JSON.stringify(energyData, null, 2)}</pre>}
         </div>
     );
 };
 
-export default FetchCountryEnergyComponent;
+export default FetchEnergyDataComponent;

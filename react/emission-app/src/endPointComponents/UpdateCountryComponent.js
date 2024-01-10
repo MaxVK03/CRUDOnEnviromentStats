@@ -1,29 +1,14 @@
 import React, { useState } from 'react';
-import api from '../api'; // Make sure this points to your API configuration
+import api from '../api';
 
 const UpdateCountryComponent = () => {
     const [countryUpdateData, setCountryUpdateData] = useState({
         countryName: '',
         countryIsocode: '',
         countryData: {
-            country: '',
-            year: '',
-            iso_code: '',
-            population: '',
-            gdp: '',
-            co2: '',
-            energy_per_capita: '',
-            energy_per_gdp: '',
-            methane: '',
-            nitrous_oxide: '',
-            share_of_temperature_change_from_ghg: '',
-            temperature_change_from_ch4: '',
-            temperature_change_from_co2: '',
-            temperature_change_from_ghg: '',
-            temperature_change_from_n2o: '',
-            total_ghg: ''
         }
     });
+    const [responseCode, setResponseCode] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -43,10 +28,12 @@ const UpdateCountryComponent = () => {
             const response = await api.put('/country', {
                 countryName: countryUpdateData.countryName,
                 countryIsocode: countryUpdateData.countryIsocode,
-                countrydt: countryUpdateData.countryData
+                countryData: countryUpdateData.countryData
             });
-            console.log(response.data); // Handle the response appropriately
+            setResponseCode(response.status);
+            console.log(response.data);
         } catch (error) {
+            setResponseCode(error.response ? error.response.status : 500); // Set error code if update fails
             console.error('Error updating country data:', error);
         }
     };
@@ -73,7 +60,6 @@ const UpdateCountryComponent = () => {
                         onChange={handleInputChange}
                     />
                 </div>
-                {/* Generate input fields for each country data attribute */}
                 {Object.keys(countryUpdateData.countryData).map((key) => (
                     <div key={key}>
                         <label>{key}</label>
@@ -87,6 +73,7 @@ const UpdateCountryComponent = () => {
                 ))}
                 <button type="submit">Update</button>
             </form>
+            {responseCode !== null && <p>Response Code: {responseCode}</p>}
         </div>
     );
 };

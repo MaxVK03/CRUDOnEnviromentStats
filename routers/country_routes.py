@@ -156,7 +156,8 @@ async def get_country_emissions(
     if inCSV:
         return converter.csvSender(result)
     else:
-        return result
+        print(result)
+        return country_service.handle_not_found(result, "get")
 
 
 # energy per capita and gdp
@@ -168,7 +169,6 @@ def energy(
     inCSV: bool = False,
     db=db_dependency,
 ):
-    print(numCountries, yearid, page)
     result = None
     if numCountries and yearid:
         result = country_service.getEnergy(
@@ -178,7 +178,7 @@ def energy(
     if inCSV:
         return converter.csvSender(result)
     else:
-        return country_service.handle_not_found(result, "GET")
+        return result
 
 
 @router.get("/country/climCont/")

@@ -1,6 +1,7 @@
 from fastapi import HTTPException
+from fastapi.openapi.models import Response
 from sqlalchemy import asc, desc
-from sqlalchemy.orm import load_only
+from sqlalchemy.orm import load_only, Session
 from dataManagement.models import CountryData
 
 
@@ -9,7 +10,6 @@ from dataManagement.models import CountryData
 def query_country_data(db, model_field_name, value, yearid, timeFrame):
     model_field = getattr(CountryData, model_field_name)
     year_field = CountryData.year
-
     yearid = int(yearid) if yearid is not None else None
 
     timeFrame_conditions = {
@@ -30,11 +30,16 @@ def query_country_data(db, model_field_name, value, yearid, timeFrame):
 # A Helper function for when a result cannot be found. Returns the appropriate HTTP response code
 # Indicating the searched for item has not been found.
 def handle_not_found(result, opType):
-    if result == []:
-        raise HTTPException(status_code=404, detail='Item not found, invalid search')
-    elif result is None:
-        raise HTTPException(status_code=404, detail='Item not found')
-    return result
+    if opType == "get" or opType == "delete":
+        if result == [] or result is None:
+            raise HTTPException(status_code=404, detail='Item not found')
+        return result
+    elif opType == "create":
+        if result is None:
+            raise HTTPException(status_code=400, detail='Failed to create item')
+        return result
+    else:
+        return result
 
 
 # A function for getting country data with the time frame. Makes use of the query country data function as it is a
@@ -42,7 +47,6 @@ def handle_not_found(result, opType):
 # The time frame part allows specification for before, after or equal to a specific year.
 # Allows for Country name or ISO code depending on how the function is called.
 def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
-
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
     return query_country_data(db, field, value, yearid, timeFrame)
@@ -54,7 +58,7 @@ def get_country_data_without_timeFrame(db, countryName, iso):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
     result = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
-    return result
+    return handle_not_found(result, "get")
 
 
 # Gets the country emission fields when provided a time frame.
@@ -74,7 +78,6 @@ def get_country_emission_with_timeframe(db, countryName, iso, yearid, timeFrame)
     condition = timeFrame_conditions.get(timeFrame, year_field == yearid)
     result = None
     if condition is not None:
-
         result = db.query(CountryData).filter(condition, CountryData.__dict__[field] == value).options(
             load_only(
                 CountryData.year,
@@ -123,24 +126,29 @@ def get_country_emissions_by_name(db, countryName, iso):
         return handle_not_found(result, "get")
 
 
-
 # TODO: Add the required message if the country is not found.
 # Deletes the country data when given the country name.
 # The time frame parameter allows specification for before, after or equal to a specific year.
 def delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, timeFrame):
     result = query_country_data(db, 'country', countryName, yearid, timeFrame)
+    if not result:
+        return handle_not_found(result, "delete")
     db.delete(result)
     db.commit()
 
 
 # Other CRUD operations
 # Creates a country data item for the provided year with the provided data.
-def create_country_data(db, country_data_request):
-    new_country_data = CountryData(**country_data_request.dict())
-    db.add(new_country_data)
-    db.commit()
-    db.refresh(new_country_data)
-    return new_country_data
+def create_country_data(db: Session, country_data_request):
+    try:
+        new_country_data = CountryData(**country_data_request.dict())
+        db.add(new_country_data)
+        db.commit()
+        db.refresh(new_country_data)
+        return handle_not_found(new_country_data, "create")
+    except Exception as e:
+        # Handle specific exceptions as needed
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # TODO: Once have wifi check if this must be for a specific year. Makes sense it should be.
@@ -219,6 +227,9 @@ def getEnergy(db, page, noCountries, year):
     # Set a default page number if page is None
     if page is None:
         page = 1
+
+    if noCountries is None:
+        noCountries = 10
 
     # Calculate the offset
     offset_value = (page - 1) * noCountries
