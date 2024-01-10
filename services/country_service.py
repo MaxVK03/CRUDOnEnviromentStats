@@ -232,7 +232,7 @@ def getClimContPast(db, noCountries, pastYears, sort):
         return handle_not_found(result, "get")
     else:
         return 'Invalid parameters.'
-
+        #TODO: HTTP ERROR
 
 # Gets the energy data for a provided year with paging support. If there is no provided page number then just returns
 # the first page otherwise will return the requested page.

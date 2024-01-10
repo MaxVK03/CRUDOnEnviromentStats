@@ -23,11 +23,13 @@ async def get_temperature_change_by_continent(
     continent: str = None, year: int = None, inCSV: bool = False, db=db_dependency
 ):
     """
-    **Returns** the temperature change by continent.
-    Can be filtered for a certain year and later.
-    Data format defaults to JSON, can be in CSV.
-
     **Name**: "/continent/temperatureChange"
+
+    **Returns** the temperature change by continent.
+    Get the continent's by continent name.
+    Can be filtered for a certain year and later.
+
+    **Return Representation:** Defaults to JSON, can also be in CSV.
 
     **Access**: GET continent/temperatureChange
 
@@ -36,6 +38,11 @@ async def get_temperature_change_by_continent(
     - **year**: Optional[int] - The year of the data (defaults to all data).
     - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
     - **return**: Continent data based on the provided criteria.
+
+    **Errors:**
+    - **HTTP Error 400: Bad Request:
+      - The user did not input a continent
+      - The user did not input a valid continent
     """
     if not continent:
         raise HTTPException(status_code=400, detail="Request needs a continent!")

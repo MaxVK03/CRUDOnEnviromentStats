@@ -18,14 +18,15 @@ async def get_country_data(
     db=db_dependency,
 ):
     """
-    **Returns* country data based on various criteria.
+    **Returns** country data based on various criteria.
+
     Country can be queried by name or ISO-code (will take name over ISO code if both are provided)
     A time-frame for the data can be specified.
     Data format defaults to JSON, can be in CSV.
 
-    **Name*: "/country/data"
+    **Name**: "/country/data"
 
-    **Access*: GET /country/data
+    **Access**: GET /country/data
 
     **Query parameters**:
     - **countryName**: Optional[str] - The name of the country.
@@ -33,7 +34,10 @@ async def get_country_data(
     - **yearid**: Optional[int] - The year of the data.
     - **timeframe**: Optional[string] - The time frame (defaults to "after")
     - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
-    - **return**: Country data based on the provided criteria.
+
+    **Errors**:
+    - HTTP Error: 400
+        - Invalid parameters were input.
     """
     if countryName or countryIsocode:
         if yearid:
@@ -56,12 +60,35 @@ async def get_country_data(
 @router.post("/country")
 async def create_country(countrydt: CountryDataRequest, db=db_dependency):
     """
-    Create a new country to add to the database.
-    Access: POST /country
-    :param countrydt: The country data to be added.
-    :param db: The database session.
-    :return: Result of the creation operation.
+        **Name**: "/country"
+
+        **Returns** A newly created country.
+        Creates a new entry in the database with a country.
+        The data of the country is specified by the user.
+
+        **Return Representation** Defaults to JSON.
+
+        **Access**: POST /country
+
+        **Query parameters**:
+        - country[str] - The name of the country
+        - year[int] - The year of the data
+        - iso_code[str] - ISO Code of the country
+        - population[int] - Population of the country
+        - gdp[float] - GDP of the country
+        - co2[float] - CO2 emissions of the country
+        - energy_per_capita[float] - energy per capita of the country
+        - energy_per_gdp[float] - energy per GDP of the country
+        - methane[float] - Methane emissions by the country
+        - nitrous_oxide[float] - Nitrous oxide emissions of the country
+        - share_of_temperature_change_from_ghg[float] - Share of temperature change from green house gasses of the country
+        - temperature_change_from_ch4[float] - Temperature change from methane emissions of the country
+        - temperature_change_from_co2[float] - Temperature change of carbon dioxide emissions of the country.
+        - temperature_change_from_ghg[float] - Temperature change from green house gases of the country
+        - temperature_change_from_n2o[float] - Temperature change by nitrious oxide emissions of the country.
+        - total_ghg[float] - Total green house gas emissions by the country
     """
+    #TODO: Add validation for creating a country and add the appropriate error here.
     return country_service.create_country_data(db, countrydt)
 
 
@@ -73,14 +100,35 @@ async def update_country(
     countryIsocode: str = None,
 ):
     """
-    Update country data by name or iso code.
-    Access: PUT /country
-    :param countryName: Optional[str] - The name of the country.
-    :param countryIsocode: Optional[str] - The iso code of the country.
-    :param countrydt: A country data request object containing the data to be updated.
-    :param db: The database session.
-    :return: Result of the update operation.
-    """
+        **Name**: "/country"
+
+        **Returns** Updates a country from the database specified by the user.
+        User specifies which country they want to update either through country name or country ISO code.
+
+        **Return Representation** Defaults to JSON.
+
+        **Access**: PUT /country
+
+        **Query parameters**:
+        - country[str] - The name of the country
+        - year[int] - The year of the data
+        - iso_code[str] - ISO Code of the country
+        - population[int] - Population of the country
+        - gdp[float] - GDP of the country
+        - co2[float] - CO2 emissions of the country
+        - energy_per_capita[float] - energy per capita of the country
+        - energy_per_gdp[float] - energy per GDP of the country
+        - methane[float] - Methane emissions by the country
+        - nitrous_oxide[float] - Nitrous oxide emissions of the country
+        - share_of_temperature_change_from_ghg[float] - Share of temperature change from green house gasses of the country
+        - temperature_change_from_ch4[float] - Temperature change from methane emissions of the country
+        - temperature_change_from_co2[float] - Temperature change of carbon dioxide emissions of the country.
+        - temperature_change_from_ghg[float] - Temperature change from green house gases of the country
+        - temperature_change_from_n2o[float] - Temperature change by nitrious oxide emissions of the country.
+        - total_ghg[float] - Total green house gas emissions by the country
+        """
+    #        TODO: Add validation for updating a country and give appropriate HTTP errors.
+
     if countryName:
         return country_service.update_country_data_by_name(db, countryName, countrydt)
     elif countryIsocode:
@@ -98,14 +146,23 @@ async def delete_country(
     db=db_dependency,
 ):
     """
-    Delete a country by name, iso code, and/or year.
-    Access: DELETE /country
-    :param timeFrame:
-    :param countryName: Optional[str] - The name of the country.
-    :param countryIsocode: Optional[str] - The iso code of the country.
-    :param yearid: Optional[int] - The year of the data (defaults to "equal").
-    :param db: The database session.
-    :return: Result of the deletion operation.
+        **Name**: "/country"
+
+        **Returns** Deletes a country from the database specified by the user.
+
+        **Return Representation** Defaults to JSON, can also return CSV.
+
+        **Access**: DELETE /country
+
+        **Query parameters**:
+        - **Country Name**: [str] - The name of the country to find the data for.
+        - **Country ISO Code**[str] - The ISO code of the country to find the data for.
+        - **year**: Optional[int] - The year of the data (no year, defaults to all data).
+        - **Time frame**: Optional[str] - Before or after the given year, (defaults to equal to that year)
+
+        **Errors**:
+        - **HTTP Error 400: Bad Request:
+          - User gave an invalid combination of input parameters.
     """
     if countryName and yearid and timeFrame:
         return country_service.delete_country_data_by_name_and_year_and_timeFrame(
@@ -116,7 +173,7 @@ async def delete_country(
             db, countryIsocode, yearid
         )
     else:
-        raise HTTPException(status_code=404, detail="Invalid Parameters")
+        raise HTTPException(status_code=400, detail="Invalid combination of parameters")
 
 
 @router.get("/country/emissions")
@@ -129,18 +186,26 @@ async def get_country_emissions(
     db=db_dependency,
 ):
     """
-    Retrieve country emissions data based on various criteria.
-    Access: GET /country/emissions
-    :param inCSV:
-    :param timeFrame:
-    :param countryName: Optional[str] - The name of the country.
-    :param countryIsocode: Optional[str] - The iso code of the country.
-    :param yearid: Optional[int] - The year of the data.
-    :param db: The database session.
-    :return: Emissions data based on the provided criteria.
-    """
-    print(f"Time: {timeFrame}")
+        **Name**: "/country/emissions"
 
+        **Returns** The emissions per country in the years specified.
+        Choose the country by name or ISO code.
+        Can be filtered for a certain year and later.
+
+        **Return Representation** Defaults to JSON, can also return CSV.
+
+        **Access**: GET /country/emissions
+
+        **Query parameters**:
+        - **Country Name**: [str] - The name of the country to find the data for.
+        - **Country ISO Code**:[str] - The ISO code of the country to find the data for.
+        - **year**: Optional[int] - The year of the data (defaults to all data).
+        - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
+
+        **Errors**:
+        - **HTTP Error 404: Not Found:
+          - User did not input either a country name or a country ISO code.
+    """
     if countryName or countryIsocode:
         if yearid:
             result = country_service.get_country_emission_with_timeframe(
@@ -151,7 +216,7 @@ async def get_country_emissions(
                 db, countryName, countryIsocode
             )
     else:
-        raise HTTPException(status_code=404, detail="Invalid parameters")
+        raise HTTPException(status_code=404, detail="Input a country name or country ISO code")
 
     # Convert to CSV if requested:
     if inCSV:
@@ -170,6 +235,24 @@ def energy(
     inCSV: bool = False,
     db=db_dependency,
 ):
+    """
+        **Name**: "/country/energy"
+
+        **Returns** The emissions per country ni the specific years specified.
+        Choose the country by name or ISO code.
+        Can be filtered for a certain year and later.
+
+        **Return Representation** Defaults to JSON, can also return CSV.
+
+        **Access**: GET /country/emissions
+
+        **Query parameters**:
+        - **numCountries**: [int] - Number of countries to be displayed
+        - **year**: [int] - The year of the data (defaults to all data).
+        - **page** Optional[int] - which page of the batch we want {10,20,50,100}
+        - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
+    """
+    #TODO: add HTTP error
     result = None
     if numCountries and yearid:
         result = country_service.getEnergy(
@@ -191,6 +274,23 @@ def climCont(
     sort: str = "top",
     inCSV: bool = False,
 ):
+    """
+        **Name**: "/country/climCont"
+
+        **Returns** The top or Bottom N countries based on their contribution to climate change.
+
+        **Return Representation** Defaults to JSON, can also return CSV.
+
+        **Access**: GET /country/climCont
+
+        **Query parameters**:
+        - **noCountries**: [str] - The number of countries to return.
+        - **year**: [int] - The year of the data (defaults to all data).
+        - **pastYears**: Optional[int] - amount of past years for data to include.
+        - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
+        - **sort**: Optional[str] - Default top - specifies if we return top or bottom countries for criteria.
+    """
+    #TODO: ADD HTTP errors in the documentation
     result = None
     if noCountries and sort:
         if yearid:
