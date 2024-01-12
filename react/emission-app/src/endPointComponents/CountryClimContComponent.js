@@ -29,7 +29,7 @@ const FetchCountryClimContComponent = () => {
 
     return (
         <div>
-            <h2>Fetch Climate Data by Continent</h2>
+            <h2>Fetch Contribution To Climate Change Data by Country</h2>
             <input
                 type="number"
                 value={noCountries}
