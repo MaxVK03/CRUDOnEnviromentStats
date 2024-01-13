@@ -16,4 +16,4 @@ services:
         REACT_APP_PORT: ${REACT_PORT}
       dockerfile: Dockerfile
     ports:
-      - ${REACT_PORT}:3000
+      - ${REACT_PORT}:${REACT_PORT}
