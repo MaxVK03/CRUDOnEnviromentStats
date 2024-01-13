@@ -5,6 +5,9 @@ from dataManagement import models
 from routers import country_routes, continent_routes
 from auths import auth
 
+import os
+from dotenv import load_dotenv
+
 # declares the start of the app. FastAPI handles this.
 app = FastAPI()
 
@@ -16,9 +19,12 @@ app.include_router(country_routes.router)
 app.include_router(continent_routes.router)
 app.include_router(auth.router)
 
+load_dotenv()
+port = os.environ.get("REACT_PORT", 3000)
 origins = [
-    'http://localhost:3000'
+    f'http://localhost:{port}'
 ]
+print(origins)
 
 # Permissions.
 # everything is allowed at the moment.

@@ -12,5 +12,6 @@ COPY ./routers/ ./routers
 COPY ./services/ ./services
 COPY ./auths/ ./auths
 COPY ./CountryDataCo2.db .
+COPY ./.env .
 
 CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

@@ -5,7 +5,13 @@ WORKDIR .
 COPY public/ ./public
 COPY src/ ./src
 COPY package.json .
+COPY ./.env .
 
 RUN npm install
+
+ARG REACT_APP_FASTAPI_PORT
+ENV REACT_APP_FASTAPI_PORT $REACT_APP_FASTAPI_PORT
+ARG REACT_APP_PORT
+EVN REACT_APP_PORT $REACT_APP_PORT
 
 CMD ["npm", "start"]
