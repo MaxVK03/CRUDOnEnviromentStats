@@ -18,6 +18,10 @@ const ContinentTemperatureChange = () => {
         }
     };
 
+    const clearData = () => {
+        setData(null);
+    };
+
     return (
         <div>
             <h2>Continent Temperature Change</h2>
@@ -42,6 +46,7 @@ const ContinentTemperatureChange = () => {
                 in CSV
             </label>
             <button onClick={fetchData}>Fetch Data</button>
+            <button onClick={clearData}>Clear Data</button>
             {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
         </div>
     );

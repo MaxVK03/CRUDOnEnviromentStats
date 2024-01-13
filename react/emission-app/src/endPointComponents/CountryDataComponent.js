@@ -27,6 +27,10 @@ const CountryDataComponent = () => {
         }
     };
 
+    const clearData = () => {
+        setCountryData(null);
+    };
+
     return (
         <div>
             <h2>Fetch Country Data</h2>
@@ -63,6 +67,7 @@ const CountryDataComponent = () => {
                 in CSV
             </label>
             <button onClick={fetchCountryData}>Fetch Data</button>
+            <button onClick={clearData}>Clear Data</button>
             {countryData && <pre>{JSON.stringify(countryData, null, 2)}</pre>}
         </div>
     );

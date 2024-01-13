@@ -27,6 +27,10 @@ const FetchCountryClimContComponent = () => {
         }
     };
 
+    const clearData = () => {
+        setClimContData(null);
+    };
+
     return (
         <div>
             <h2>Fetch Contribution To Climate Change Data by Country</h2>
@@ -63,6 +67,7 @@ const FetchCountryClimContComponent = () => {
                 in CSV
             </label>
             <button onClick={fetchClimContData}>Fetch Data</button>
+            <button onClick={clearData}>Clear Data</button>
             {climContData && <pre>{JSON.stringify(climContData, null, 2)}</pre>}
         </div>
     );

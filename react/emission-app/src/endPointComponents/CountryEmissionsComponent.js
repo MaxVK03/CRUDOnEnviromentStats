@@ -27,6 +27,10 @@ const FetchCountryEmissionsComponent = () => {
         }
     };
 
+    const clearData = () => {
+        setEmissionData(null);
+    };
+
     return (
         <div>
             <h2>Fetch Country Emissions Data</h2>
@@ -63,6 +67,7 @@ const FetchCountryEmissionsComponent = () => {
                 in CSV
             </label>
             <button onClick={fetchEmissions}>Fetch Data</button>
+            <button onClick={clearData}>Clear Data</button>
             {emissionData && <pre>{JSON.stringify(emissionData, null, 2)}</pre>}
         </div>
     );
