@@ -97,6 +97,7 @@ async def update_country(
     countrydt: CountryDataRequest,
     db=db_dependency,
     countryName: str = None,
+    yearid: int = None,
     countryIsocode: str = None,
 ):
     """
@@ -128,13 +129,11 @@ async def update_country(
         - total_ghg[float] - Total green house gas emissions by the country
         """
     #        TODO: Add validation for updating a country and give appropriate HTTP errors.
-
     if countryName:
-        return country_service.update_country_data_by_name(db, countryName, countrydt)
+        return country_service.update_country(db, countryName, countryIsocode, yearid, countrydt)
     elif countryIsocode:
-        return country_service.update_country_data_by_isocode(
-            db, countryIsocode, countrydt
-        )
+        return country_service.update_country(
+            db, countryName, countryIsocode, yearid, countrydt)
 
 
 @router.delete("/country")

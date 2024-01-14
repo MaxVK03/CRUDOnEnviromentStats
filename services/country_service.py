@@ -164,10 +164,10 @@ def create_country_data(db: Session, country_data_request):
 # TODO: Once have wifi check if this must be for a specific year. Makes sense it should be.
 # Retrieves a country and then uses the provided data to update the country data for that year.
 # Can retrieve the data by either the country name or the countries ISO code.
-def update_country(db, countryName, iso, updated_data):
+def update_country(db, countryName, iso, year, updated_data):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
-    existing_data = db.query(CountryData).filter(CountryData.__dict__[field] == value).all()
+    existing_data = db.query(CountryData).filter(CountryData.__dict__[field] == value, CountryData.year == year).first()
 
     if not existing_data:
         raise HTTPException(status_code=404, detail='Item not found')
@@ -253,7 +253,8 @@ def getEnergy(db, page, noCountries, year):
             CountryData.year,
             CountryData.country,
             CountryData.energy_per_gdp,
-            CountryData.energy_per_capita)
-    ).filter(CountryData.country.not_in(CONTINENTS)).filter(CountryData.year == year).offset(offset_value).limit(noCountries).all()
+            CountryData.energy_per_capita,
+            CountryData.population)
+    ).filter(CountryData.country.not_in(CONTINENTS)).filter(CountryData.year == year).order_by(CountryData.population.asc()).offset(offset_value).limit(noCountries).all()
 
     return handle_not_found(result, "get")
