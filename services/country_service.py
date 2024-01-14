@@ -275,4 +275,4 @@ def get_Country_Add_Data(country_name):
 
 
 def get_country_list(db: Session):
-    return db.query(CountryData.country, CountryData.iso_code).distinct().all()
+    return db.query(CountryData.country, CountryData.iso_code).distinct().filter(CountryData.country.not_in(CONTINENTS))
