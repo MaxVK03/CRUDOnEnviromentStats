@@ -320,3 +320,22 @@ def climCont(
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return result
+
+
+@router.get("/country/addData/")
+def capital(
+        countryName: str = None,
+        inCSV: bool = False,
+):
+    """
+    #TODO add documentation
+    """
+
+    result = None
+    if countryName:
+        result = country_service.get_Country_Add_Data(countryName)
+    if inCSV:
+        result = StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
+    else:
+        print(result)
+        return result

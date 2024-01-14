@@ -11,6 +11,7 @@ def csvSender(result):
 
     data_dicts = [item.to_dict() for item in result] if hasattr(result[0], 'to_dict') else [vars(item) for item in
                                                                                             result]
+    data_dicts = [{key: value for key, value in row.items() if not key.startswith('_sa_instance_state')} for row in data_dicts]
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=data_dicts[0].keys())
     writer.writeheader()
