@@ -339,3 +339,9 @@ def capital(
     else:
         print(result)
         return result
+
+
+@router.get("/country/list")
+async def get_country_list(db: db_dependency = Depends(get_db)):
+    countries = country_service.get_country_list(db)
+    return [{"name": country[0], "iso": country[1]} for country in countries]

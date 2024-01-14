@@ -272,3 +272,7 @@ def get_Country_Add_Data(country_name):
 
     result = response.json()
     return handle_not_found(result, "get")
+
+
+def get_country_list(db: Session):
+    return db.query(CountryData.country, CountryData.iso_code).distinct().all()
