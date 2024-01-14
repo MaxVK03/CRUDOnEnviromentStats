@@ -91,13 +91,13 @@ async def create_country(countrydt: CountryDataRequest, db=db_dependency):
     return country_service.create_country_data(db, countrydt)
 
 
-@router.put("/country")
+@router.put("/country/{countryIsocode}/{yearid}")
 async def update_country(
+    yearid: int,
+    countryIsocode: str,
     countrydt: CountryDataRequest,
     db=db_dependency,
     countryName: str = None,
-    yearid: int = None,
-    countryIsocode: str = None,
 ):
     """
         **Name**: "/country"

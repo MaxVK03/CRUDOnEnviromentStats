@@ -76,10 +76,8 @@ const UpdateCountryComponent = () => {
             total_ghg: parseFloat(updateData.total_ghg)
         };
 
-        console.log('Hello');
-        console.log('processedData', processedData);
         try {
-            const response = await api.put('/country', processedData);
+            const response = await api.put(`/country/${selectedCountry}/${selectedYear}`, processedData);
             setResponseCode(response.status);
         } catch (error) {
             setResponseCode(error.response ? error.response.status : 500);
