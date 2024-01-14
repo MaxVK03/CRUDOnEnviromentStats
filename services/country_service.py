@@ -270,11 +270,5 @@ def get_Country_Add_Data(country_name):
     url = f"https://restcountries.com/v3.1/name/{country_name}?fullText=true"
     response = requests.get(url)
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        print(f"Failed to retrieve data: {response.status_code}")
-        return HTTPException(status_code=404, detail='Item not found')
-
+    result = response.json()
+    return handle_not_found(result, "get")
