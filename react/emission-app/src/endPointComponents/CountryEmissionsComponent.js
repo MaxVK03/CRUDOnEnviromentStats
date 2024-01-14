@@ -8,6 +8,8 @@ const FetchCountryEmissionsComponent = () => {
     const [timeFrame, setTimeFrame] = useState('');
     const [inCSV, setInCSV] = useState(false);
     const [emissionData, setEmissionData] = useState(null);
+    const [error, setError] = useState(null);
+
 
     const fetchEmissions = async () => {
         try {
@@ -21,9 +23,15 @@ const FetchCountryEmissionsComponent = () => {
                 }
             });
             setEmissionData(response.data);
+            setError(null);
         } catch (error) {
-            console.error('Error', error);
-            setEmissionData(error.response)
+            setEmissionData(null);
+            setError(error.response ? error.response.data : {detail : error.detail});
+            const statusCode = error.response ? error.response.status : 500
+            setError(prevError => ({
+                ...prevError,
+                status : statusCode
+            }));
         }
     };
 
@@ -68,6 +76,12 @@ const FetchCountryEmissionsComponent = () => {
             </label>
             <button onClick={fetchEmissions}>Fetch Data</button>
             <button onClick={clearData}>Clear Data</button>
+            {error && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                    <strong>Error: {error.detail}</strong>
+                    {error.status && <p> Status Code: {error.status}</p>}
+                </div>
+            )}
             {emissionData && <pre>{JSON.stringify(emissionData, null, 2)}</pre>}
         </div>
     );

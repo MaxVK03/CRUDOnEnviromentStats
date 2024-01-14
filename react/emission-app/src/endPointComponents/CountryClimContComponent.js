@@ -8,6 +8,7 @@ const FetchCountryClimContComponent = () => {
     const [sort, setSort] = useState('');
     const [inCSV, setInCSV] = useState(false);
     const [climContData, setClimContData] = useState(null);
+    const [error, setError] = useState(null);
 
     const fetchClimContData = async () => {
         try {
@@ -21,9 +22,15 @@ const FetchCountryClimContComponent = () => {
                 }
             });
             setClimContData(response.data);
+            setError(null);
         } catch (error) {
-            console.error('Error fetching climate data:', error);
-            setClimContData(error.response)
+            setClimContData(null);
+            setError(error.response ? error.response.data : {detail : error.detail});
+            const statusCode = error.response ? error.response.status : 500
+            setError(prevError => ({
+                ...prevError,
+                status : statusCode
+            }));
         }
     };
 
@@ -68,6 +75,12 @@ const FetchCountryClimContComponent = () => {
             </label>
             <button onClick={fetchClimContData}>Fetch Data</button>
             <button onClick={clearData}>Clear Data</button>
+            {error && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                    <strong>Error: {error.detail}</strong>
+                    {error.status && <p> Status Code: {error.status}</p>}
+                </div>
+            )}
             {climContData && <pre>{JSON.stringify(climContData, null, 2)}</pre>}
         </div>
     );

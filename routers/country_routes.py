@@ -37,7 +37,7 @@ async def get_country_data(
 
     **Errors**:
     - HTTP Error: 400
-        - Invalid parameters were input.
+        - Missing country name or ISO code.
     """
     if countryName or countryIsocode:
         if yearid:
@@ -49,8 +49,7 @@ async def get_country_data(
                 db, countryName, countryIsocode
             )
     else:
-        raise HTTPException(status_code=400, detail="Invalid parameters")
-
+        raise HTTPException(status_code=400, detail="Missing country name or ISO code")
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
@@ -127,13 +126,25 @@ async def update_country(
         - temperature_change_from_ghg[float] - Temperature change from green house gases of the country
         - temperature_change_from_n2o[float] - Temperature change by nitrious oxide emissions of the country.
         - total_ghg[float] - Total green house gas emissions by the country
+
+        **Errors**:
+        - **HTTP Error 400: Bad Request:
+          - User did not input either the country name or the ISO code.
+          - User did not input the relevant year
         """
-    #        TODO: Add validation for updating a country and give appropriate HTTP errors.
     if countryName:
-        return country_service.update_country(db, countryName, countryIsocode, yearid, countrydt)
+        if yearid:
+            return country_service.update_country(db, countryName, countryIsocode, yearid, countrydt)
+        else:
+            raise HTTPException(status_code=400, detail="Must input the year that needs to be updated")
     elif countryIsocode:
-        return country_service.update_country(
-            db, countryName, countryIsocode, yearid, countrydt)
+        if yearid:
+            return country_service.update_country(
+                db, countryName, countryIsocode, yearid, countrydt)
+        else:
+            raise HTTPException(status_code=400, detail="Must input the year that needs to be updated")
+    else:
+        raise  HTTPException(status_code=400, detail="Must input either country name or ISO code")
 
 
 @router.delete("/country")
@@ -221,7 +232,6 @@ async def get_country_emissions(
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
-        print(result)
         return country_service.handle_not_found(result, "get")
 
 
@@ -250,13 +260,17 @@ def energy(
         - **year**: [int] - The year of the data (defaults to all data).
         - **page** Optional[int] - which page of the batch we want {10,20,50,100}
         - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
+
+        **Errors**:
+        - **HTTP Error 400: Bad Request:
+          - User did not input the number of countries and the year for the search
     """
-    #TODO: add HTTP error
-    result = None
     if numCountries and yearid:
         result = country_service.getEnergy(
             db=db, page=page, noCountries=numCountries, year=yearid
         )
+    else:
+        raise HTTPException(status_code=400, detail="Must enter number of countries and relevant year")
 
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
@@ -289,9 +303,7 @@ def climCont(
         - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
         - **sort**: Optional[str] - Default top - specifies if we return top or bottom countries for criteria.
     """
-    #TODO: ADD HTTP errors in the documentation
-    result = None
-    if noCountries and sort:
+    if noCountries:
         if yearid:
             result = country_service.getClimContYear(
                 db=db, noCountries=noCountries, year=yearid, sort=sort
@@ -300,6 +312,10 @@ def climCont(
             result = country_service.getClimContPast(
                 db=db, noCountries=noCountries, pastYears=pastYears, sort=sort
             )
+        else:
+            raise HTTPException(status_code=400, detail="Must input either year or amount of past years for search")
+    else:
+        raise HTTPException(status_code=400, detail="Missing the number of countries")
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:

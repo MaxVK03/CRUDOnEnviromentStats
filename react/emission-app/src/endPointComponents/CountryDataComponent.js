@@ -8,6 +8,7 @@ const CountryDataComponent = () => {
     const [timeFrame, setTimeFrame] = useState('');
     const [inCSV, setInCSV] = useState(false);
     const [countryData, setCountryData] = useState(null);
+    const [error, setError] = useState(null);
 
     const fetchCountryData = async () => {
         try {
@@ -21,9 +22,15 @@ const CountryDataComponent = () => {
                 }
             });
             setCountryData(response.data);
+            setError(null);
         } catch (error) {
-            console.error('Error fetching country data:', error);
-            setCountryData(error.response);
+            setCountryData(null);
+            setError(error.response ? error.response.data : {detail : error.detail});
+            const statusCode = error.response ? error.response.status : 500
+            setError(prevError => ({
+                ...prevError,
+                status : statusCode
+            }));
         }
     };
 
@@ -68,6 +75,12 @@ const CountryDataComponent = () => {
             </label>
             <button onClick={fetchCountryData}>Fetch Data</button>
             <button onClick={clearData}>Clear Data</button>
+            {error && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                    <strong>Error: {error.detail}</strong>
+                    {error.status && <p> Status Code: {error.status}</p>}
+                </div>
+            )}
             {countryData && <pre>{JSON.stringify(countryData, null, 2)}</pre>}
         </div>
     );

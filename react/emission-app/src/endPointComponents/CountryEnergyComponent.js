@@ -7,6 +7,7 @@ const FetchCountryEnergyComponent = () => {
     const [page, setPage] = useState('');
     const [inCSV, setInCSV] = useState(false);
     const [energyData, setEnergyData] = useState(null);
+    const [error, setError] = useState(null);
 
     const fetchEnergyData = async () => {
         try {
@@ -19,9 +20,15 @@ const FetchCountryEnergyComponent = () => {
                 }
             });
             setEnergyData(response.data);
+            setError(null);
         } catch (error) {
-            console.error('Error fetching energy data:', error);
-            setEnergyData(error.response)
+            setEnergyData(null);
+            setError(error.response ? error.response.data : {detail : error.detail});
+            const statusCode = error.response ? error.response.status : 500
+            setError(prevError => ({
+                ...prevError,
+                status : statusCode
+            }));
         }
     };
 
@@ -62,6 +69,12 @@ const FetchCountryEnergyComponent = () => {
                 <button onClick={fetchEnergyData}>Fetch Data</button>
                 <button onClick={clearData}>Clear Data</button>
             </div>
+            {error && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                    <strong>Error: {error.detail}</strong>
+                    {error.status && <p> Status Code: {error.status}</p>}
+                </div>
+            )}
             {energyData && <pre>{JSON.stringify(energyData, null, 2)}</pre>}
         </div>
     );
