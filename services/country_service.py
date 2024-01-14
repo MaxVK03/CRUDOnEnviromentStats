@@ -1,8 +1,9 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, requests
 from fastapi.openapi.models import Response
 from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import load_only, Session
 from dataManagement.models import CountryData
+import requests
 
 CONTINENTS = {
     "Africa",
@@ -196,11 +197,13 @@ def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
 
 def getClimContYear(db, noCountries, year, sort):
     if sort == 'bottom' and noCountries >= 1 and year >= 1:
-        result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(CountryData.year == year).order_by(
+        result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(
+            CountryData.year == year).order_by(
             asc(CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
         return handle_not_found(result, "get")
     elif sort == 'top' and noCountries >= 1 and year >= 1:
-        result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(CountryData.year == year).order_by(desc(
+        result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(
+            CountryData.year == year).order_by(desc(
             CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
         return handle_not_found(result, "get")
     else:
@@ -232,7 +235,8 @@ def getClimContPast(db, noCountries, pastYears, sort):
         return handle_not_found(result, "get")
     else:
         return 'Invalid parameters.'
-        #TODO: HTTP ERROR
+        # TODO: HTTP ERROR
+
 
 # Gets the energy data for a provided year with paging support. If there is no provided page number then just returns
 # the first page otherwise will return the requested page.
@@ -255,6 +259,22 @@ def getEnergy(db, page, noCountries, year):
             CountryData.energy_per_gdp,
             CountryData.energy_per_capita,
             CountryData.population)
-    ).filter(CountryData.country.not_in(CONTINENTS)).filter(CountryData.year == year).order_by(CountryData.population.asc()).offset(offset_value).limit(noCountries).all()
+    ).filter(CountryData.country.not_in(CONTINENTS)).filter(CountryData.year == year).order_by(
+        CountryData.population.asc()).offset(offset_value).limit(noCountries).all()
 
     return handle_not_found(result, "get")
+
+
+def get_Country_Add_Data(country_name):
+    country_name = country_name.replace(" ", "%20")
+    url = f"https://restcountries.com/v3.1/name/{country_name}?fullText=true"
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+        return HTTPException(status_code=404, detail='Item not found')
+

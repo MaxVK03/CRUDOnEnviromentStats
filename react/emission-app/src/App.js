@@ -7,6 +7,7 @@ import DeleteCountryComponent from "./endPointComponents/DeleteCountryComponent"
 import CountryEmissionsComponent from "./endPointComponents/CountryEmissionsComponent";
 import CountryEnergyComponent from "./endPointComponents/CountryEnergyComponent";
 import CountryClimContComponent from "./endPointComponents/CountryClimContComponent";
+import AdditionalCountryDataComponent from "./endPointComponents/AdditionalCountryDataComponent";
 
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
             <CountryEmissionsComponent />
             <CountryEnergyComponent />
             <CountryClimContComponent />
+            <AdditionalCountryDataComponent />
         </div>
     );
 };
