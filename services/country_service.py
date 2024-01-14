@@ -196,12 +196,12 @@ def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
 
 
 def getClimContYear(db, noCountries, year, sort):
-    if sort == 'bottom' and noCountries >= 1 and year >= 1:
+    if sort.lower() == 'bottom' and noCountries >= 1 and year >= 1:
         result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(
             CountryData.year == year).order_by(
             asc(CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
         return handle_not_found(result, "get")
-    elif sort == 'top' and noCountries >= 1 and year >= 1:
+    elif sort.lower() == 'top' and noCountries >= 1 and year >= 1:
         result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(
             CountryData.year == year).order_by(desc(
             CountryData.share_of_temperature_change_from_ghg)).limit(noCountries).all()
@@ -213,7 +213,7 @@ def getClimContYear(db, noCountries, year, sort):
 def getClimContPast(db, noCountries, pastYears, sort):
     # TODO: not hardcode the max year maybe (2022)
     target_years = [2022 - i for i in range(pastYears)]
-    if sort == 'bottom' and noCountries >= 1 and pastYears >= 1:
+    if sort.lower() == 'bottom' and noCountries >= 1 and pastYears >= 1:
         result = (
             db.query(CountryData)
             .filter(CountryData.country.not_in(CONTINENTS))
@@ -223,7 +223,7 @@ def getClimContPast(db, noCountries, pastYears, sort):
             .all()
         )
         return handle_not_found(result, "get")
-    elif sort == 'top' and noCountries >= 1 and pastYears >= 1:
+    elif sort.lower() == 'top' and noCountries >= 1 and pastYears >= 1:
         result = (
             db.query(CountryData)
             .filter(CountryData.country.not_in(CONTINENTS))
