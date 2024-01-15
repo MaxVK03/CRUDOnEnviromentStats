@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import './Component.css';
 
 const UpdateCountryComponent = () => {
     const [countryList, setCountryList] = useState([]);
@@ -103,7 +104,7 @@ const UpdateCountryComponent = () => {
 
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Update Country Data</h2>
             <div>
                 <select value={selectedCountry} onChange={handleCountryChange}>
@@ -127,9 +128,9 @@ const UpdateCountryComponent = () => {
                 </button>
             </div>
             <form onSubmit={handleSubmit}>
-                {Object.keys(updateData).map((key, index) => (
+                {Object.keys(updateData).map((key) => (
                     <div key={originalData.id + '-' + key}>
-                        <label>{key}</label>
+                        <label>{key}:&nbsp;&nbsp;</label>
                         <input
                             type="text"
                             name={key}

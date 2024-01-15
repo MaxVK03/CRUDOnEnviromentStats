@@ -8,11 +8,12 @@ import CountryEmissionsComponent from "./endPointComponents/CountryEmissionsComp
 import CountryEnergyComponent from "./endPointComponents/CountryEnergyComponent";
 import CountryClimContComponent from "./endPointComponents/CountryClimContComponent";
 import AdditionalCountryDataComponent from "./endPointComponents/AdditionalCountryDataComponent";
+import './App.css' 
 
 
 const App = () => {
     return (
-        <div>
+        <div className="App-main">
             <h1>Data Fetching App</h1>
             <ContinentTemperatureChange />
             <CountryDataComponent />
