@@ -16,7 +16,7 @@ const formatData = (data, dataType) => {
                     style={{
                       padding: '10px',
                       textAlign: 'center',
-                      border: '1px solid black',
+                      border: '1px solid white',
                     }}
                   >
                     {cellData}

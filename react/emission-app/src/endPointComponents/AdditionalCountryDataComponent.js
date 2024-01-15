@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
+import './Component.css';
 
 const AdditionalCountryDataComponent = () => {
     const [countryName, setCountryName] = useState('');
@@ -27,7 +29,7 @@ const AdditionalCountryDataComponent = () => {
     };
 
     return (
-        <div>
+        <div className="Data-component">
             <h2>Fetch Country Data</h2>
             <input
                 type="text"
@@ -45,7 +47,7 @@ const AdditionalCountryDataComponent = () => {
             </label>
             <button onClick={fetchCountryData}>Fetch Data</button>
             <button onClick={clearData}>Clear Data</button>
-            {countryData && <pre>{JSON.stringify(countryData, null, 2)}</pre>}
+            {countryData && <pre className='Data-data'>{formatData(countryData, 'JSON')}</pre>}
         </div>
     );
 };

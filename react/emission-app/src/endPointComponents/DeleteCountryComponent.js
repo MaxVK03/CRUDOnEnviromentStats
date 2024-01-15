@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
+import './Component.css';
 
 const DeleteCountryComponent = () => {
     const [deleteParams, setDeleteParams] = useState({
@@ -39,7 +40,7 @@ const DeleteCountryComponent = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Delete Country Data</h2>
             <form onSubmit={handleSubmit}>
                 <input

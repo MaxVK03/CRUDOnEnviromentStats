@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api';
 import formatData from './DataFormatter';
+import './Component.css';
 
 const ContinentTemperatureChange = () => {
     const [dataType, setDataType] = useState('JSON');
@@ -37,7 +38,7 @@ const ContinentTemperatureChange = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Continent Temperature Change</h2>
             <input 
                 type="text" 
@@ -67,7 +68,7 @@ const ContinentTemperatureChange = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {data && (<div> {formatData(data, dataType)} </div>)}
+            {data && (<div className='Data-data'> {formatData(data, dataType)} </div>)}
         </div>
     );
 };
