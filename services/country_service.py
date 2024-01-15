@@ -1,6 +1,6 @@
 from fastapi import HTTPException, requests
 from fastapi.openapi.models import Response
-from sqlalchemy import asc, desc, func
+from sqlalchemy import asc, desc, func, delete
 from sqlalchemy.orm import load_only, Session
 from dataManagement.models import CountryData
 import requests
@@ -136,17 +136,23 @@ def get_country_emissions_by_name(db, countryName, iso):
         ).all()
         return handle_not_found(result, "get")
 
-
-# TODO: Add the required message if the country is not found.
-# Deletes the country data when given the country name.
-# The time frame parameter allows specification for before, after or equal to a specific year.
-def delete_country_data_by_name_and_year_and_timeFrame(db, countryName, yearid, timeFrame):
-    result = query_country_data(db, 'country', countryName, yearid, timeFrame)
-    if not result:
-        return handle_not_found(result, "delete")
-    db.delete(result)
+def delete_country_data_by_name_and_year(db, countryName, yearid):
+    data_to_delete = db.query(CountryData).filter(CountryData.country == countryName,
+                                                  CountryData.year == yearid).first()
+    if not data_to_delete:
+        raise HTTPException(status_code=404, detail='Item not found')
+    db.delete(data_to_delete)
     db.commit()
+    return {"detail": "Deleted successfully"}
 
+def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
+    data_to_delete = db.query(CountryData).filter(CountryData.iso_code == countryIsocode,
+                                                  CountryData.year == yearid).first()
+    if not data_to_delete:
+        raise HTTPException(status_code=404, detail='Item not found')
+    db.delete(data_to_delete)
+    db.commit()
+    return {"detail": "Deleted successfully"}
 
 # Other CRUD operations
 # Creates a country data item for the provided year with the provided data.
@@ -187,14 +193,7 @@ def get_all_data(db):
     return result
 
 
-def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
-    data_to_delete = db.query(CountryData).filter(CountryData.iso_code == countryIsocode,
-                                                  CountryData.year == yearid).first()
-    if not data_to_delete:
-        raise HTTPException(status_code=404, detail='Item not found')
-    db.delete(data_to_delete)
-    db.commit()
-    return {"detail": "Deleted successfully"}
+
 
 
 def getClimContYear(db, noCountries, year, sort):

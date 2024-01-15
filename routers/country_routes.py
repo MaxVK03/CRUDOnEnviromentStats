@@ -152,7 +152,6 @@ async def delete_country(
     countryName: str = None,
     countryIsocode: str = None,
     yearid: int = None,
-    timeFrame: str = "equal",
     db=db_dependency,
 ):
     """
@@ -174,14 +173,18 @@ async def delete_country(
         - **HTTP Error 400: Bad Request:
           - User gave an invalid combination of input parameters.
     """
-    if countryName and yearid and timeFrame:
-        return country_service.delete_country_data_by_name_and_year_and_timeFrame(
-            db, countryName, yearid, timeFrame
-        )
-    elif countryIsocode and yearid and timeFrame:
-        return country_service.delete_country_data_by_isocode_and_year(
-            db, countryIsocode, yearid
-        )
+    if countryName:
+        if yearid:
+            return country_service.delete_country_data_by_name_and_year(db, countryName, yearid)
+        else:
+            raise HTTPException(status_code=400, detail="Must enter a year")
+    elif countryIsocode:
+        if yearid:
+            return country_service.delete_country_data_by_isocode_and_year(
+                db, countryIsocode, yearid
+            )
+        else:
+            raise HTTPException(status_code=400, detail="Must enter a year")
     else:
         raise HTTPException(status_code=400, detail="Invalid combination of parameters")
 

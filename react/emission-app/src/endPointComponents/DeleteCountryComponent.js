@@ -5,21 +5,36 @@ const DeleteCountryComponent = () => {
     const [deleteParams, setDeleteParams] = useState({
         countryName: '',
         countryIsocode: '',
-        yearid: '',
-        timeFrame: ''
+        yearid: ''
     });
 
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
     const handleInputChange = (e) => {
         setDeleteParams({ ...deleteParams, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
+        const processedDeleteParams = {
+            countryName: deleteParams.countryName,
+            countryIsocode: deleteParams.countryIsocode,
+            yearid: deleteParams.yearid === '' ? null : parseInt(deleteParams.yearid, 10)
+        };
         e.preventDefault();
         try {
-            await api.delete('/country', { params: deleteParams });
+            await api.delete('/country', { params: processedDeleteParams });
+            setSuccessMessage('Country data deleted successfully');
             console.log('Country data deleted successfully');
+            setError(null)
         } catch (error) {
+            setError(error.response ? error.response.data : {detail : error.detail});
+            const statusCode = error.response ? error.response.status : 500
+            setError(prevError => ({
+                ...prevError,
+                status : statusCode
+            }));
             console.error('Error deleting country data:', error);
+            setSuccessMessage(null)
         }
     };
 
@@ -48,13 +63,17 @@ const DeleteCountryComponent = () => {
                     onChange={handleInputChange}
                     placeholder="Year ID"
                 />
-                <input
-                    type="text"
-                    name="timeFrame"
-                    value={deleteParams.timeFrame}
-                    onChange={handleInputChange}
-                    placeholder="Time Frame"
-                />
+                {successMessage && (
+                    <div style={{ color: 'green', marginTop: '10px' }}>
+                        <strong>{successMessage}</strong>
+                    </div>
+                )}
+                {error && (
+                    <div style={{ color: 'red', marginTop: '10px' }}>
+                        <strong>Error: {error.detail}</strong>
+                        {error.status && <p> Status Code: {error.status}</p>}
+                    </div>
+                )}
                 <button type="submit">Delete</button>
             </form>
         </div>

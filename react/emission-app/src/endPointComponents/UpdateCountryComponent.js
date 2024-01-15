@@ -4,13 +4,14 @@ import api from '../api';
 const UpdateCountryComponent = () => {
     const [countryList, setCountryList] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
-    const [selectedYear, setSelectedYear
-
-    ] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
     const [originalData, setOriginalData] = useState({});
     const [updateData, setUpdateData] = useState({});
     const [responseCode, setResponseCode] = useState(null);
 
+    const clearData = () => {
+        setUpdateData({});
+    };
 
     useEffect(() => {
         const fetchCountries = async () => {
@@ -112,7 +113,6 @@ const UpdateCountryComponent = () => {
                     ))}
                 </select>
                 <
-
                     input
                     type="text"
                     value={selectedYear}
@@ -121,6 +121,9 @@ const UpdateCountryComponent = () => {
                 />
                 <button type="button" onClick={fetchAndPopulateData}>
                     Fetch Country Data
+                </button>
+                <button type="button" onClick={clearData}>
+                    Clear Data
                 </button>
             </div>
             <form onSubmit={handleSubmit}>
