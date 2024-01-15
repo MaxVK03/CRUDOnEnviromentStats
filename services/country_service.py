@@ -174,7 +174,9 @@ def update_country(db, countryName, iso, year, updated_data):
         raise HTTPException(status_code=404, detail='Item not found')
 
     for key, value in updated_data.dict().items():
-        setattr(existing_data, key, value)
+        if hasattr(existing_data, key):
+            setattr(existing_data, key, value)
+
     db.commit()
     db.refresh(existing_data)
     return existing_data

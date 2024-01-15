@@ -56,35 +56,49 @@ const UpdateCountryComponent = () => {
     };
 
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const processedData = {
-            ...updateData,
-            year: parseInt(updateData.year, 10),
-            population: parseInt(updateData.population, 10),
-            gdp: parseFloat(updateData.gdp),
-            co2: parseFloat(updateData.co2),
-            energy_per_capita: parseFloat(updateData.energy_per_capita),
-            energy_per_gdp: parseFloat(updateData.energy_per_gdp),
-            methane: parseFloat(updateData.methane),
-            nitrous_oxide: parseFloat(updateData.nitrous_oxide),
-            share_of_temperature_change_from_ghg: parseFloat(updateData.share_of_temperature_change_from_ghg),
-            temperature_change_from_ch4: parseFloat(updateData.temperature_change_from_ch4),
-            temperature_change_from_co2: parseFloat(updateData.temperature_change_from_co2),
-            temperature_change_from_ghg: parseFloat(updateData.temperature_change_from_ghg),
-            temperature_change_from_n2o: parseFloat(updateData.temperature_change_from_n2o),
-            total_ghg: parseFloat(updateData.total_ghg)
-        };
 
+        const processedData = Object.entries(updateData).reduce((acc, [key, value]) => {
+            if (value === '') {
+                acc[key] = null;
+            } else {
+                switch (key) {
+                    case 'year':
+                    case 'population':
+                        acc[key] = parseInt(value, 10);
+                        break;
+                    case 'gdp':
+                    case 'co2':
+                    case 'energy_per_capita':
+                    case 'energy_per_gdp':
+                    case 'methane':
+                    case 'nitrous_oxide':
+                    case 'share_of_temperature_change_from_ghg':
+                    case 'temperature_change_from_ch4':
+                    case 'temperature_change_from_co2':
+                    case 'temperature_change_from_ghg':
+                    case 'temperature_change_from_n2o':
+                    case 'total_ghg':
+                        acc[key] = parseFloat(value);
+                        break;
+                    default:
+                        acc[key] = value;
+                }
+            }
+            return acc;
+        }, {});
+
+        console.log('processedData:', processedData);
         try {
             const response = await api.put(`/country/${selectedCountry}/${selectedYear}`, processedData);
             setResponseCode(response.status);
         } catch (error) {
             setResponseCode(error.response ? error.response.status : 500);
-            // console.error('Error updating country data:', error);
+             console.error('Error updating country data:', error);
         }
     };
-
 
 
     return (

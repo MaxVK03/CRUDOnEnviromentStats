@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 from dataManagement.database import Base
@@ -9,40 +11,40 @@ from sqlalchemy import Column, Integer, String, Float
 class CountryData(Base):
     __tablename__ = "CountryData"
     id = Column(Integer, primary_key=True)
-    country = Column(String)
-    year = Column(Integer)
-    iso_code = Column(String)
-    population = Column(Integer)
-    gdp = Column(Float)
-    co2 = Column(Float)
-    energy_per_capita = Column(Float)
-    energy_per_gdp = Column(Float)
-    methane = Column(Float)
-    nitrous_oxide = Column(Float)
-    share_of_temperature_change_from_ghg = Column(Float)
-    temperature_change_from_ch4 = Column(Float)
-    temperature_change_from_co2 = Column(Float)
-    temperature_change_from_ghg = Column(Float)
-    temperature_change_from_n2o = Column(Float)
-    total_ghg = Column(Float)
+    country = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    iso_code = Column(String, nullable=True)
+    population = Column(Integer, nullable=True)
+    gdp = Column(Float, nullable=True)
+    co2 = Column(Float, nullable=True)
+    energy_per_capita = Column(Float, nullable=True)
+    energy_per_gdp = Column(Float, nullable=True)
+    methane = Column(Float, nullable=True)
+    nitrous_oxide = Column(Float, nullable=True)
+    share_of_temperature_change_from_ghg = Column(Float, nullable=True)
+    temperature_change_from_ch4 = Column(Float, nullable=True)
+    temperature_change_from_co2 = Column(Float, nullable=True)
+    temperature_change_from_ghg = Column(Float, nullable=True)
+    temperature_change_from_n2o = Column(Float, nullable=True)
+    total_ghg = Column(Float, nullable=True)
 
 
 # A country data request. Used for checking when inserting into the DB.
 # TODO: add more checking
 class CountryDataRequest(BaseModel):
-    country: str = Field(min_length=1, max_length=100)
-    year: int = Field(min=0, max=9999)
-    iso_code: str = Field(min_length=1, max_length=10)
-    population: int
-    gdp: float
-    co2: float
-    energy_per_capita: float
-    energy_per_gdp: float
-    methane: float
-    nitrous_oxide: float
-    share_of_temperature_change_from_ghg: float
-    temperature_change_from_ch4: float
-    temperature_change_from_co2: float
-    temperature_change_from_ghg: float
-    temperature_change_from_n2o: float
-    total_ghg: float
+    country: Optional[str] = Field(None, min_length=1, max_length=100)
+    year: Optional[int] = Field(None, min=0, max=9999)
+    iso_code: Optional[str] = Field(None, min_length=1, max_length=10)
+    population: Optional[int] = None
+    gdp: Optional[float] = None
+    co2: Optional[float] = None
+    energy_per_capita: Optional[float] = None
+    energy_per_gdp: Optional[float] = None
+    methane: Optional[float] = None
+    nitrous_oxide: Optional[float] = None
+    share_of_temperature_change_from_ghg: Optional[float] = None
+    temperature_change_from_ch4: Optional[float] = None
+    temperature_change_from_co2: Optional[float] = None
+    temperature_change_from_ghg: Optional[float] = None
+    temperature_change_from_n2o: Optional[float] = None
+    total_ghg: Optional[float] = None
