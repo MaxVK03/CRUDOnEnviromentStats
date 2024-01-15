@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
 
 const ContinentTemperatureChange = () => {
+    const [dataType, setDataType] = useState('JSON');
     const [continent, setContinent] = useState('');
     const [year, setYear] = useState('');
     const [inCSV, setInCSV] = useState(false);
@@ -12,6 +14,11 @@ const ContinentTemperatureChange = () => {
         try {
             const parsedYear = year ? parseInt(year) : null;
             const response = await api.get('/continent/temperatureChange', { params: { continent, year: parsedYear, inCSV } });
+            if (response.headers.getContentType().includes('/csv')) {
+              setDataType('CSV');
+            } else {
+              setDataType('JSON');
+            }
             setData(response.data);
             setError(null);
         } catch (error) {
@@ -60,7 +67,7 @@ const ContinentTemperatureChange = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+            {data && (<div> {formatData(data, dataType)} </div>)}
         </div>
     );
 };

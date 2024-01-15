@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
 
 const FetchCountryEmissionsComponent = () => {
+    const [dataType, setDataType] = useState('JSON');
     const [countryName, setCountryName] = useState('');
     const [countryIsocode, setCountryIsocode] = useState('');
     const [yearid, setYearid] = useState('');
@@ -22,6 +24,11 @@ const FetchCountryEmissionsComponent = () => {
                     inCSV
                 }
             });
+            if (response.headers.getContentType().includes('/csv')) {
+              setDataType('CSV');
+            } else {
+              setDataType('JSON');
+            }
             setEmissionData(response.data);
             setError(null);
         } catch (error) {
@@ -82,7 +89,7 @@ const FetchCountryEmissionsComponent = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {emissionData && <pre>{JSON.stringify(emissionData, null, 2)}</pre>}
+            {emissionData && <div>{formatData(emissionData, dataType)}</div>}
         </div>
     );
 };
