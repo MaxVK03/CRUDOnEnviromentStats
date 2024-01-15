@@ -305,6 +305,11 @@ def climCont(
         - **pastYears**: Optional[int] - amount of past years for data to include.
         - **inCSV**: Optional[boolean] - Default False - Return in CSV if True else in JSON.
         - **sort**: Optional[str] - Default top - specifies if we return top or bottom countries for criteria.
+
+        **Errors**:
+        - **HTTP Error 400: Bad Request:
+          - Number of countries was not input
+          - The specific year or amount of past year was not input
     """
     if noCountries:
         if yearid:

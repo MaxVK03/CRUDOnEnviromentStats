@@ -1,6 +1,6 @@
 # Getting started
 
-## Explanation of Requirement 1
+# Explanation of Requirements
 
 ### Requirement 1.1
 The following list outlines where to go in the front-end application for the different parts of this requirement:
@@ -13,8 +13,11 @@ The following list outlines where to go in the front-end application for the dif
     - The **timeframe** value defaults to **after** if it is not specified. This applies to all places where a **timeframe** is prompted in the front-end application. 
 
 - **Create**: Create Country Data section. 
+  - To create a new entry for a country's data you fill in all fields and press the submit button.
 - **Delete**: Delete Country Data section.
+  - Deleting a country works by inputting either the country's name or ISO code and a year. When pressing delete all the country's data for that year is deleted. 
 - **Update**: Update Country Data section.
+  - To update a country you can find the country, either by name or ISO code, and change the fields of the country's data accordingly. 
 
 ### Requirement 1.2
 The **Fetch Country Emissions Data** section of the front-end application fulfills this requirement. 
@@ -41,14 +44,53 @@ If both the specified year and the past year is input, the information will disp
 
 In the sort field you can specify if you want the information to display the **top** or **bottom** N countries.  
 
-## Using Docker
+### Requirement 2
+For the applicable API endpoints there is a checkbox that allows you to select CSV. If this checkbox is ticked the content-type 
+of the data will be CSV. This is handled in the back-end of the application.
+To better visualise the CSV data we have also formatted this data into a table. 
+
+### Requirement 3
+Our API design's documentation can be found in the APISpecification.yaml file. The **routers** package is where the documented 
+code for the API endpoints is. The different API endpoints all have the following documentation where applicable:
+- **Name**: The name of the endpoint
+- **Return**: What the endpoint returns
+- **Return representation**:The content-type of the data that is returned. This defaults to JSON. When CSV the content-type changes to CSV. 
+- **Endpoint Access**: Operation type and route to execute/retrieve the specified operation. 
+- **Query Parameters**: The parameters that are processed by the API in the request. Some of the parameters are optional and others are required for the request. 
+- **Errors**: The errors that can arise in the process of making the request. 
+
+### Requirement 4
+To implement the back-end of our application we used the FastAPI framework which uses Python as the language. We have ensured to document the implementation code appropriately explaining functions and parts of code where necessary.
+
+We use an SQL database and interact with it through SQLAlchemy. We use SQLAlchemy as it is well integrated with Python, allowing us to write and perform all queries needed easily and concisely.
+Furthermore, a benefit of SQLAlchemy is that it is well documented, especially the Object Relational Mapper topic. This helped us a lot when writing the back-end of our application.  
+
+### Requirement 5
+The front-end of our application is created using React in Javascript. The main reason we decided to use React was for the component structure it offers. 
+The components helped us a lot in maintaining an organised front-end. Not alone in the file structure but also in the creating of the web page.
+The different sections of our front-end that showcase the API's functionalities are as mentioned in the **Requirements 1.*** section of the report.  
+
+### Requirement 6
+
+
+# Design & Framework rationale
+
+## **Note to max and Bart**
+I have already mentioned a little about why we use SQLAlchemy and React. We should expand on this. 
+
+Why we choose python could be because we (Max and Bart?) were already familiar with it and we knew that Python was well documented. We followed along with a course/youtube tutorials for the backend. 
+
+Then we should discuss some design choices that we made. Like explaining the routers and the services. I don't think we should talk too much about design for the front end. 
+
+
+# Using Docker
 The easiest way to run this application is to use Docker.
 First create your own ```.env``` file, there is a template for this:
 ```
 cp .env.example .env
 ```
 Next, set the ports in the new ```.env``` file to your desired ports.
-Now, from the root directory of the application, your should be able to run:
+Now, from the root directory of the application, you should be able to run:
 ```
 docker compose up
 ```
@@ -59,3 +101,23 @@ You can now view emission-app in the browser.
 ```
 Where XXXX is the port specified for the front-end. Follow this link to view and interact with the front-end of the application.
 You can also see the back-end by going to ```http://localhost:YYYY```, where YYYY is the port specified for the back-end.
+
+# Work Distribution and Roles
+As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we 5constantly kept each-other updated on
+what was happening from everyone's side. This helped us a lot as we could help each other out quickly. Overall, we feel the collaboration of the team was very good. 
+
+Max was very dedicated to the project and did a big part of it. He implemented the majority of the back-end of the application. As well, he created the core components for the front-end application. 
+
+Arnaud and Bart's roles were predominantly to finish up the back and front-end of the application. This meant we looked through the project description carefully and ensured the API design met all requirements. 
+Doing this came with a fair amount of error fixing, debugging and refactorings in both parts of the application. 
+
+Aside from the aforementioned, Bart also ensured the application was deployable by Dockerising the application. Furthermore, Bart handled the submissions of the different deliverables
+and other Gitlab related issues. For example, fixing the problems we had when branches diverged or files were not syncing correctly. Lastly, Bart improved the visuals of the front-end, 
+making it more usable and pleasant to interact with. 
+
+Arnaud focused on the documentation of the API and the specification of the API. As well, Arnaud dealt with the error handling in the back end and ensuring the errors are displayed appropriately in the front end. 
+Lastly, Arnaud wrote the report and delegated tasks throughout the project when applicable.  
+
+Overall, we feel that we the teamwork throughout the project was good. Although some team members did more than others, we were all willing to help each other 
+and put effort into the project. 
+
