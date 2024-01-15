@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
+import './Component.css';
 
 const FetchCountryEnergyComponent = () => {
+    const [dataType, setDataType] = useState('JSON');
     const [numCountries, setNoCountries] = useState('');
     const [yearid, setYearid] = useState('');
     const [page, setPage] = useState('');
@@ -19,6 +22,11 @@ const FetchCountryEnergyComponent = () => {
                     inCSV
                 }
             });
+            if (response.headers.getContentType().includes('/csv')) {
+              setDataType('CSV');
+            } else {
+              setDataType('JSON');
+            }
             setEnergyData(response.data);
             setError(null);
         } catch (error) {
@@ -37,7 +45,7 @@ const FetchCountryEnergyComponent = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Fetch Country Energy Data</h2>
             <div>
                 <input
@@ -75,7 +83,7 @@ const FetchCountryEnergyComponent = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {energyData && <pre>{JSON.stringify(energyData, null, 2)}</pre>}
+            {energyData && <div className='Data-data'>{formatData(energyData, dataType)}</div>}
         </div>
     );
 };

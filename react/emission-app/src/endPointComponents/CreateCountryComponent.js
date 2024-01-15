@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import api from '../api'; // Ensure this is the correct path to your API configuration
+import api from '../api';
+import './Component.css';
 
 const CreateCountryComponent = () => {
     const [countryData, setCountryData] = useState({
@@ -39,13 +40,13 @@ const CreateCountryComponent = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Create Country Data</h2>
             <form onSubmit={handleSubmit}>
                 {/* Generate input fields for each attribute */}
                 {Object.keys(countryData).map((key) => (
                     <div key={key}>
-                        <label>{key}</label>
+                        <label>{key}:&nbsp;&nbsp;</label>
                         <input
                             type="text"
                             name={key}

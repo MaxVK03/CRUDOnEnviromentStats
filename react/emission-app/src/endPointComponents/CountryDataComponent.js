@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
+import './Component.css';
 
 const CountryDataComponent = () => {
+    const [dataType, setDataType] = useState('JSON');
     const [countryName, setCountryName] = useState('');
     const [countryIsocode, setCountryIsocode] = useState('');
     const [yearid, setYearid] = useState('');
@@ -21,6 +24,11 @@ const CountryDataComponent = () => {
                     inCSV
                 }
             });
+            if (response.headers.getContentType().includes('/csv')) {
+              setDataType('CSV');
+            } else {
+              setDataType('JSON');
+            }
             setCountryData(response.data);
             setError(null);
         } catch (error) {
@@ -39,7 +47,7 @@ const CountryDataComponent = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Fetch Country Data</h2>
             <input
                 type="text"
@@ -81,7 +89,7 @@ const CountryDataComponent = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {countryData && <pre>{JSON.stringify(countryData, null, 2)}</pre>}
+            {countryData && <div className='Data-data'>{formatData(countryData, dataType)}</div>}
         </div>
     );
 };

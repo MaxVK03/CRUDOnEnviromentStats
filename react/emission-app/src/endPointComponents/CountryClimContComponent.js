@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import api from '../api';
+import formatData from './DataFormatter';
+import './Component.css';
 
 const FetchCountryClimContComponent = () => {
+    const [dataType, setDataType] = useState('JSON');
     const [noCountries, setNumCountries] = useState('');
     const [yearid, setYearid] = useState('');
     const [pastYears, setPastYears] = useState(''); 
@@ -21,6 +24,11 @@ const FetchCountryClimContComponent = () => {
                     inCSV
                 }
             });
+            if (response.headers.getContentType().includes('/csv')) {
+              setDataType('CSV');
+            } else {
+              setDataType('JSON');
+            }
             setClimContData(response.data);
             setError(null);
         } catch (error) {
@@ -39,7 +47,7 @@ const FetchCountryClimContComponent = () => {
     };
 
     return (
-        <div>
+        <div className='Data-component'>
             <h2>Fetch Contribution To Climate Change Data by Country</h2>
             <input
                 type="number"
@@ -81,7 +89,7 @@ const FetchCountryClimContComponent = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {climContData && <pre>{JSON.stringify(climContData, null, 2)}</pre>}
+            {climContData && <div className='Data-data'>{formatData(climContData, dataType)}</div>}
         </div>
     );
 };
