@@ -108,7 +108,7 @@ const UpdateCountryComponent = () => {
                 <select value={selectedCountry} onChange={handleCountryChange}>
                     <option value="">Select Country</option>
                     {countryList.map(country => (
-                        <option key={country.iso} value={country.iso}>{country.name}</option>
+                        <option key={country.iso} value={country.iso}>{`${country.name} (${country.iso})`}</option>
                     ))}
                 </select>
                 <

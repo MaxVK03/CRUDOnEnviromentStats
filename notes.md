@@ -1,5 +1,4 @@
 TODO notes:
-  - Make update and create not require all fields are filled
   - Provide feedback on crud operations
   - Slightly improve website (?)
   - Mention interpretation of rq1 point 1
@@ -15,3 +14,4 @@ DONE
 * 3rd party API is free points (Max Done)
 * Have a way to remove data from screen (Bart done)
 * .env files (Bart done)
+* Make update and create not require all fields are filled (Max done)
