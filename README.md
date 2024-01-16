@@ -1,28 +1,28 @@
-# Getting started
+# Assignment Report
 
-# Explanation of Requirements
+## Explanation of Requirements
 
 ### Requirement 1.1
 The following list outlines where to go in the front-end application for the different parts of this requirement:
 - **Retrieve**: Fetch Country Data section.
-    - If there is no year input, then all available data for the self will be displayed. If there is a year input, the **timeframe** decides what data is displayed.  
+    - If there is no year input, then all available data for the country will be displayed. If there is a year input, the **timeframe** decides what data is displayed.  
     - The **timeframe** works as follows. You can input:
-      - before: Gets the relevant self data **before** the specified year
-      - equal: Gets the relevant self data **for** the specified year
-      - after: Gets the relevant self data **including and after** the specified year
+      - before: Gets the relevant country data **including and before** the specified year
+      - equal: Gets the relevant country data **for** the specified year
+      - after: Gets the relevant country data **including and after** the specified year
     - The **timeframe** value defaults to **after** if it is not specified. This applies to all places where a **timeframe** is prompted in the front-end application. 
 
 - **Create**: Create Country Data section. 
-  - To create a new entry for a self's data you fill in all fields and press the submit button.
+  - To create a new entry for a country's data you fill in all fields and press the submit button.
 - **Delete**: Delete Country Data section.
-  - Deleting a self works by inputting either the self's name or ISO code and a year. When pressing delete all the self's data for that year is deleted. 
+  - Deleting a country works by inputting either the country's name or ISO code and a year. When pressing delete all the country's data for that year is deleted. 
 - **Update**: Update Country Data section.
-  - To update a self you can find the self, either by name or ISO code, and change the fields of the self's data accordingly. 
+  - To update a country you can find the country, either by name or ISO code, and change the fields of the country's data accordingly. 
 
 ### Requirement 1.2
 The **Fetch Country Emissions Data** section of the front-end application fulfills this requirement. 
 
-If there is no year specified in the search all available data for the self will be displayed. If a year is input, the data 
+If there is no year specified in the search all available data for the country will be displayed. If a year is input, the data 
 including and after that year will be displayed. 
 ### Requirement 1.3
 The **Continent Temperature Change** section of the front-end application fulfills this requirement. 
@@ -68,28 +68,18 @@ Furthermore, a benefit of SQLAlchemy is that it is well documented, especially t
 ### Requirement 5
 The front-end of our application is created using React in Javascript. The main reason we decided to use React was for the component structure it offers. 
 The components helped us a lot in maintaining an organised front-end. Not alone in the file structure but also in the creating of the web page.
-The different sections of our front-end that showcase the API's functionalities are as mentioned in the **Requirements 1.*** section of the report.  
+The different sections of our front-end that showcase the API's functionalities are as mentioned in the **Requirements 1.** section of the report.  
 
 ### Requirement 6
+This application can be run with `docker compose up` as per requirement 6.
+These instructions will cover how to do this, assuming docker is installed an you are using Linux.
 
-
-# Design & Framework rationale
-
-## **Note to max and Bart**
-I have already mentioned a little about why we use SQLAlchemy and React. We should expand on this. 
-
-Why we choose python could be because we (Max and Bart?) were already familiar with it and we knew that Python was well documented. We followed along with a course/youtube tutorials for the backend. 
-
-Then we should discuss some design choices that we made. Like explaining the routers and the services. I don't think we should talk too much about design for the front end. 
-
-
-# Using Docker
-The easiest way to run this application is to use Docker.
-First create your own ```.env``` file, there is a template for this:
+### Docker instructions
+First create your own `.env` file using the template:
 ```
 cp .env.example .env
 ```
-Next, set the ports in the new ```.env``` file to your desired ports.
+Next, set the ports in the new `.env` file to your desired ports.
 Now, from the root directory of the application, you should be able to run:
 ```
 docker compose up
@@ -99,10 +89,22 @@ You should get something that looks like:
 You can now view emission-app in the browser.
   Local:            http://localhost:XXXX
 ```
-Where XXXX is the port specified for the front-end. Follow this link to view and interact with the front-end of the application.
-You can also see the back-end by going to ```http://localhost:YYYY```, where YYYY is the port specified for the back-end.
+Where XXXX is the port specified for the front-end in the `.env` file. Follow this link to view and interact with the front-end of the application.
+You can also see the back-end by going to `http://localhost:YYYY`, where YYYY is the port specified for the back-end in the `.env` file.
 
-# Work Distribution and Roles
+
+## Design & Framework rationale
+
+## **Note to max and Bart**
+I have already mentioned a little about why we use SQLAlchemy and React. We should expand on this. 
+
+Why we choose python could be because we (Max and Bart?) were already familiar with it and we knew that Python was well documented. We followed along with a course/youtube tutorials for the backend. 
+
+Then we should discuss some design choices that we made. Like explaining the routers and the services. I don't think we should talk too much about design for the front end. 
+
+
+
+## Work Distribution and Roles
 As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we 5constantly kept each-other updated on
 what was happening from everyone's side. This helped us a lot as we could help each other out quickly. Overall, we feel the collaboration of the team was very good. 
 
@@ -120,4 +122,3 @@ Lastly, Arnaud wrote the report and delegated tasks throughout the project when 
 
 Overall, we feel that we the teamwork throughout the project was good. Although some team members did more than others, we were all willing to help each other 
 and put effort into the project. 
-
