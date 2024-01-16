@@ -29,8 +29,37 @@ const CreateCountryComponent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const processedData = Object.entries(countryData).reduce((acc, [key, value]) => {
+            if (value === '') {
+                acc[key] = null;
+            } else {
+                switch (key) {
+                    case 'year':
+                    case 'population':
+                        acc[key] = parseInt(value, 10);
+                        break;
+                    case 'gdp':
+                    case 'co2':
+                    case 'energy_per_capita':
+                    case 'energy_per_gdp':
+                    case 'methane':
+                    case 'nitrous_oxide':
+                    case 'share_of_temperature_change_from_ghg':
+                    case 'temperature_change_from_ch4':
+                    case 'temperature_change_from_co2':
+                    case 'temperature_change_from_ghg':
+                    case 'temperature_change_from_n2o':
+                    case 'total_ghg':
+                        acc[key] = parseFloat(value);
+                        break;
+                    default:
+                        acc[key] = value;
+                }
+            }
+            return acc;
+        }, {});
         try {
-            const response = await api.post('/country', countryData);
+            const response = await api.post('/country', processedData);
             setResponseCode(response.status); // Set response code on successful submission
             console.log(response.data); // Handle the response appropriately
         } catch (error) {
