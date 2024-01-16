@@ -98,7 +98,7 @@ const UpdateCountryComponent = () => {
             setResponseCode(response.status);
         } catch (error) {
             setResponseCode(error.response ? error.response.status : 500);
-             console.error('Error updating country data:', error);
+            console.error('Error updating country data:', error);
         }
     };
 

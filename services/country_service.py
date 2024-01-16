@@ -265,8 +265,8 @@ def getEnergy(db, page, noCountries, year):
 
     return handle_not_found(result, "get")
 
-
-def get_Country_Add_Data(country_name):
+#Third party API call. Gets additional country information such as the capital, currency and official name.
+def     get_Country_Add_Data(country_name):
     country_name = country_name.replace(" ", "%20")
     url = f"https://restcountries.com/v3.1/name/{country_name}?fullText=true"
     response = requests.get(url)
@@ -274,6 +274,6 @@ def get_Country_Add_Data(country_name):
     result = response.json()
     return handle_not_found(result, "get")
 
-
+#Used to get the list of all countries in the database. This function is called when the user wants to update.
 def get_country_list(db: Session):
     return db.query(CountryData.country, CountryData.iso_code).distinct().filter(CountryData.country.not_in(CONTINENTS))

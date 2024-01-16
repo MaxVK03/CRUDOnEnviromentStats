@@ -32,3 +32,17 @@ def get_temperature_change_by_continent(db, continent, yearid):
                   )).all()
     print(type(result))
     return handle_not_found(result, "get")
+
+# Function that calculates the population change of a country based on a start and end year.
+def get_population_change_continent(db, continent, startYear, endYear):
+    startPop = db.query(CountryData.population).filter(
+        CountryData.country == continent,
+        CountryData.year == startYear).scalar()
+
+    endPop = db.query(CountryData.population).filter(CountryData.country == continent,
+        CountryData.year == endYear).scalar()
+
+    if startPop and endPop:
+        return ((endPop - startPop) / startPop) * 100
+    else:
+        raise HTTPException(status_code=404, detail="No data for given years found")

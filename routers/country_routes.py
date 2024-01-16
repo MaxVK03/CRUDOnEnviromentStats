@@ -333,23 +333,37 @@ def climCont(
 @router.get("/country/addData/")
 def capital(
         countryName: str = None,
-        inCSV: bool = False,
 ):
     """
-    #TODO add documentation
+    **Name**: "/country/addData"
+
+    **Returns** Additional data on the specified country. Such as: capital, currency, official languages etc....
+
+    **Return Representation** JSON
+
+    **Access**: GET /country/addData
+
+    **Query parameters**:
+    - **countryName**: [str] - The name of the country to find the data for.
+
+    **Errors**:
+    - **HTTP Error 400: Bad Request:
+      - User did not input a country name so request cannot be made.
+    - **HTTP Error 404: Not found:
+      - The usr input a country Name that is not in the database.
     """
 
-    result = None
     if countryName:
         result = country_service.get_Country_Add_Data(countryName)
-    if inCSV:
-        result = StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
-    else:
-        print(result)
         return result
+    else:
+        raise HTTPException(status_code=400, detail="Must input a country Name")
 
 
 @router.get("/country/list")
 async def get_country_list(db: db_dependency = Depends(get_db)):
     countries = country_service.get_country_list(db)
-    return [{"name": country[0], "iso": country[1]} for country in countries]
+    if countries:
+        return [{"name": country[0], "iso": country[1]} for country in countries]
+    else:
+        raise HTTPException(status_code=404, detail="Could not fetch country data at this time.")

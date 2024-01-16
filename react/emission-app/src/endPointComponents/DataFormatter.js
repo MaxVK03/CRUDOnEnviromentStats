@@ -39,4 +39,11 @@ const formatData = (data, dataType) => {
   }
 };
 
-export default formatData;
+const formatFloat = (number) => {
+    const parsedNumber = parseFloat(number);
+    const textColor = parsedNumber >= 0 ? 'green' : 'red';
+    const formattedNumber = parsedNumber.toFixed(2);
+    return <span style={{ color: textColor, fontWeight: 'bold' }}>{formattedNumber}</span>;
+};
+
+export {formatData, formatFloat};

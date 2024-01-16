@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
-import formatData from './DataFormatter';
+import {formatData} from './DataFormatter';
 import './Component.css';
 
 const FetchCountryEnergyComponent = () => {

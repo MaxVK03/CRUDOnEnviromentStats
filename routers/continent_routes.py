@@ -58,3 +58,43 @@ async def get_temperature_change_by_continent(
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
         return result
+
+
+@router.get("/continent/popChange")
+async def get_population_increase(
+        continent: str = None, startYear: int = None, endYear: int = None, db=db_dependency
+):
+    """
+    **Name**: "/continent/popChange"
+
+    **Returns** The population change from the start year to the end year.
+
+    **Return Representation:** JS text
+
+    **Access**: GET continent/popChange
+
+    **Query parameters**:
+    - **continent**: [str] - The continent to find the data for.
+    - **startYear**: [int] - The start year of the search
+    - **endYear**: [int] - The end year of the search
+
+    **Errors:**
+    - **HTTP Error 400: Bad Request:
+      - The user did not input a continent
+      - The user input an invalid continent
+      - The user did not input a start and end year
+    - **HTTP error 404: Not Found:
+      - No data found for the given years
+    """
+    if continent.title() not in VALID_CONTINENTS:
+        raise HTTPException(status_code=400, detail="Now a valid continent")
+
+    if not continent:
+        raise HTTPException(status_code=400, detail="Request needs a continent")
+    else:
+        if not startYear or not endYear:
+            raise HTTPException(status_code=400, detail="Start and end year are required")
+        else:
+            populationIncrease = continent_service.get_population_change_continent(db=db,  continent=continent.title(),
+                startYear=startYear, endYear=endYear)
+            return populationIncrease

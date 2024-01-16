@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import api from '../api';
-import {formatData} from './DataFormatter';
+import {formatFloat} from './DataFormatter';
 import './Component.css';
 
 const ContinentTemperatureChange = () => {
-    const [dataType, setDataType] = useState('JSON');
     const [continent, setContinent] = useState('');
-    const [year, setYear] = useState('');
-    const [inCSV, setInCSV] = useState(false);
+    const [startYear, setStartYear] = useState('');
+    const [endYear, setEndYear] = useState('');
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
 
     const fetchData = async () => {
         try {
-            const parsedYear = year ? parseInt(year) : null;
-            const response = await api.get('/continent/temperatureChange', { params: { continent, year: parsedYear, inCSV } });
-            if (response.headers.getContentType().includes('/csv')) {
-              setDataType('CSV');
-            } else {
-              setDataType('JSON');
-            }
+            const parsedStartYear = startYear ? parseInt(startYear) : null;
+            const parsedEndYear = endYear ? parseInt(endYear) : null;
+
+            const response = await api.get('/continent/popChange', { params: { continent, startYear: parsedStartYear,
+            endYear: parsedEndYear} });
             setData(response.data);
             setError(null);
         } catch (error) {
@@ -39,27 +36,26 @@ const ContinentTemperatureChange = () => {
 
     return (
         <div className='Data-component'>
-            <h2>Continent Temperature Change</h2>
-            <input 
-                type="text" 
-                value={continent} 
-                onChange={(e) => setContinent(e.target.value)} 
+            <h2>Continent Population Change Data</h2>
+            <input
+                type="text"
+                value={continent}
+                onChange={(e) => setContinent(e.target.value)}
                 placeholder="Continent"
             />
-            <input 
-                type="number" 
-                value={year} 
-                onChange={(e) => setYear(e.target.value)} 
-                placeholder="Year" 
+            <input
+                type="number"
+                value={startYear}
+                onChange={(e) => setStartYear(e.target.value)}
+                placeholder="Start Year"
             />
-            <label>
-                <input 
-                    type="checkbox" 
-                    checked={inCSV} 
-                    onChange={(e) => setInCSV(e.target.checked)}
-                />
-                in CSV
-            </label>
+            <input
+                type="number"
+                value={endYear}
+                onChange={(e) => setEndYear(e.target.value)}
+                placeholder="End Year"
+            />
+
             <button onClick={fetchData}>Fetch Data</button>
             <button onClick={clearData}>Clear Data</button>
             {error && (
@@ -68,7 +64,7 @@ const ContinentTemperatureChange = () => {
                     {error.status && <p> Status Code: {error.status}</p>}
                 </div>
             )}
-            {data && (<div className='Data-data'> {formatData(data, dataType)} </div>)}
+            {data && (<div className='Data-data'> {formatFloat(data)} </div>)}
         </div>
     );
 };
