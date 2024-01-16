@@ -362,6 +362,19 @@ def capital(
 
 @router.get("/country/list")
 async def get_country_list(db: db_dependency = Depends(get_db)):
+    """
+    **Name**: "/country/list"
+
+    **Returns** All countries in the database
+
+    **Return Representation** JSON
+
+    **Access**: GET /country/list
+
+    **Errors**:
+    - **HTTP Error 404: Not found:
+      - Unable to fetch the country data at this time.
+    """
     countries = country_service.get_country_list(db)
     if countries:
         return [{"name": country[0], "iso": country[1]} for country in countries]

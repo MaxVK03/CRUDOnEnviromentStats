@@ -1,4 +1,6 @@
-# Assignment Report
+# Assignment Report 
+### Group 4
+### Max Von Klemperer (s*****), Bart Lunenborg (s****), Arnaud Van Hees (s5177766)
 
 ## Explanation of Requirements
 
@@ -103,7 +105,6 @@ Why we choose python could be because we (Max and Bart?) were already familiar w
 Then we should discuss some design choices that we made. Like explaining the routers and the services. I don't think we should talk too much about design for the front end. 
 
 
-
 ## Work Distribution and Roles
 As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we 5constantly kept each-other updated on
 what was happening from everyone's side. This helped us a lot as we could help each other out quickly. Overall, we feel the collaboration of the team was very good. 
@@ -122,3 +123,15 @@ Lastly, Arnaud wrote the report and delegated tasks throughout the project when 
 
 Overall, we feel that we the teamwork throughout the project was good. Although some team members did more than others, we were all willing to help each other 
 and put effort into the project. 
+
+## Bonus Criteria
+1. We increased the complexity of the endpoints throughout our API in a couple ways. For example, we allow for many more country data field to be input than stated in **Requirement 1.1**. Instead of only allowing GDP and Population we also allow emissions data, ISO Code, name and some others.
+As well, the way we handled updating a country's data should be noted. The dropdown box allows for a nice way to select the country you want to update, displaying all it's current fields, not just the GDP and population data.
+Like this you can change any field you want and submit the update request. Moreover, we allow for data searches before a given year, not just after. Lastly, we added an endpoint that calculates the population change of a continent over a given period of time. 
+2. We have implemented an endpoint that makes use of a third party API. This endpoint can be found in the **/routers/country_routes.py** file. 
+The third party API's documentation can be found on the following website: https://restcountries.com/. 
+Our call to this API **gets** information about the country specified that is not in the provided database. Such as: the capital of the country, the country's currency, the languages spoken in the country and a variety of other things. 
+3. Our application was made deployable by creating and properly configuring the **Dockerfile**. The **Docker instructions** section of the report helps to set this up. 
+To meet the criteria of the bonus we create a separate image for the back-end and front-end of the application. When following the instructions the application is deployable and can be tested and used normally.
+4. ### Once we have written the design part of the program this will be quick
+5. ### Max could comment on this. 
