@@ -30,4 +30,5 @@ def get_temperature_change_by_continent(db, continent, yearid):
                   CountryData.temperature_change_from_n2o,
                   CountryData.temperature_change_from_ghg
                   )).all()
+    print(type(result))
     return handle_not_found(result, "get")
