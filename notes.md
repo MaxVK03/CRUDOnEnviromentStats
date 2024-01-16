@@ -7,6 +7,7 @@ TODO notes:
   - Mention AI generation
   - Make CSV less shit
   - Mention implemented bonuses in report
+  - fix csv for third party api backend
 
 DONE
 * Sort on population size for rq1 point 4 (Arnaud Done)

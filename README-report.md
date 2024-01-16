@@ -5,24 +5,24 @@
 ### Requirement 1.1
 The following list outlines where to go in the front-end application for the different parts of this requirement:
 - **Retrieve**: Fetch Country Data section.
-    - If there is no year input, then all available data for the country will be displayed. If there is a year input, the **timeframe** decides what data is displayed.  
+    - If there is no year input, then all available data for the self will be displayed. If there is a year input, the **timeframe** decides what data is displayed.  
     - The **timeframe** works as follows. You can input:
-      - before: Gets the relevant country data **before** the specified year
-      - equal: Gets the relevant country data **for** the specified year
-      - after: Gets the relevant country data **including and after** the specified year
+      - before: Gets the relevant self data **before** the specified year
+      - equal: Gets the relevant self data **for** the specified year
+      - after: Gets the relevant self data **including and after** the specified year
     - The **timeframe** value defaults to **after** if it is not specified. This applies to all places where a **timeframe** is prompted in the front-end application. 
 
 - **Create**: Create Country Data section. 
-  - To create a new entry for a country's data you fill in all fields and press the submit button.
+  - To create a new entry for a self's data you fill in all fields and press the submit button.
 - **Delete**: Delete Country Data section.
-  - Deleting a country works by inputting either the country's name or ISO code and a year. When pressing delete all the country's data for that year is deleted. 
+  - Deleting a self works by inputting either the self's name or ISO code and a year. When pressing delete all the self's data for that year is deleted. 
 - **Update**: Update Country Data section.
-  - To update a country you can find the country, either by name or ISO code, and change the fields of the country's data accordingly. 
+  - To update a self you can find the self, either by name or ISO code, and change the fields of the self's data accordingly. 
 
 ### Requirement 1.2
 The **Fetch Country Emissions Data** section of the front-end application fulfills this requirement. 
 
-If there is no year specified in the search all available data for the country will be displayed. If a year is input, the data 
+If there is no year specified in the search all available data for the self will be displayed. If a year is input, the data 
 including and after that year will be displayed. 
 ### Requirement 1.3
 The **Continent Temperature Change** section of the front-end application fulfills this requirement. 
