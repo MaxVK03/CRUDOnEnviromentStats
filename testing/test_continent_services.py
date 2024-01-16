@@ -18,7 +18,7 @@ def test_get_temperature_change_by_continent_service_with_year():
     assert result == [{'year': 2020, 'data': 'test data'}]
 
 
-#TODO: fix this test
+# TODO: fix this test
 def test_invalid_continent():
     # handle invalid continent
     mock_db = Mock()
@@ -29,4 +29,3 @@ def test_invalid_continent():
     except Exception as e:
         pass
         # assert str(e) == 'Invalid continent'
-

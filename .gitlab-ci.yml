@@ -1,0 +1,43 @@
+stages:
+  - build-backend
+  - build-frontend
+  - test-backend
+  - deploy
+
+variables:
+  BACKEND_IMAGE_NAME: my-fastapi-backend
+  FRONTEND_IMAGE_NAME: my-react-frontend
+
+services:
+  - docker:dind
+
+build-backend:
+  stage: build-backend
+  image: docker:latest
+  script:
+    - docker build -t $BACKEND_IMAGE_NAME -f Dockerfile .
+    - docker tag $BACKEND_IMAGE_NAME $CI_REGISTRY_IMAGE/backend
+    - docker push $CI_REGISTRY_IMAGE/backend
+
+build-frontend:
+  stage: build-frontend
+  image: docker:latest
+  script:
+    - docker build -t $FRONTEND_IMAGE_NAME -f ./react/emission-app/Dockerfile ./react/emission-app
+    - docker tag $FRONTEND_IMAGE_NAME $CI_REGISTRY_IMAGE/frontend
+    - docker push $CI_REGISTRY_IMAGE/frontend
+
+test-backend:
+  stage: test-backend
+  image: python:3.9
+  script:
+    - pip install --no-cache-dir --upgrade -r ./requirements.txt
+    - pytest
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the backend..."
+    - echo "Deploying the frontend..."
+  only:
+    - main   # TODO: check this.
