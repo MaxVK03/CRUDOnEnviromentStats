@@ -33,9 +33,14 @@ build-frontend:
 test-backend:
   stage: test-backend
   image: python:3.9
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq docker.io
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
   script:
     - pip install --no-cache-dir --upgrade -r ./requirements.txt
     - pytest
+
 
 deploy:
   stage: deploy
