@@ -188,14 +188,6 @@ def update_country(db, countryName, iso, year, updated_data):
     return existing_data
 
 
-def get_all_data(db):
-    result = db.query(CountryData).all()
-    return result
-
-
-
-
-
 def getClimContYear(db, noCountries, year, sort):
     if sort.lower() == 'bottom' and noCountries >= 1 and year >= 1:
         result = db.query(CountryData).filter(CountryData.country.notin_(CONTINENTS)).filter(

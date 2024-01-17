@@ -1,6 +1,6 @@
 # Assignment Report 
 ### Group 4
-### Max Von Klemperer (s*****), Bart Lunenborg (s****), Arnaud Van Hees (s5177766)
+### Max Von Klemperer (s5060567), Bart Lunenborg (s3410579), Arnaud Van Hees (s5177766)
 
 ## Explanation of Requirements
 
@@ -95,15 +95,36 @@ Where XXXX is the port specified for the front-end in the `.env` file. Follow th
 You can also see the back-end by going to `http://localhost:YYYY`, where YYYY is the port specified for the back-end in the `.env` file.
 
 
-## Design & Framework rationale
+## Framework rationale & Design 
 
-## **Note to max and Bart**
-I have already mentioned a little about why we use SQLAlchemy and React. We should expand on this. 
+### Framework Rationale
+We decided to use FASTApi in Python as it seemed beginner-friendly and well documented. This was the case. The features that FastAPI offers, such as the **@router** annotation to specify endpoints and the
+parameter datatypes to help with validation and error handling were very beneficial. Furthermore, as a group we wanted to learn Python and thought this was a good opportunity. 
 
-Why we choose python could be because we (Max and Bart?) were already familiar with it and we knew that Python was well documented. We followed along with a course/youtube tutorials for the backend. 
+Before deciding what database to use we had looked online and found that an SQLite database, which we had used in previous courses, works well with SQLAlchemy, which allows for easy querying through Python.
+As we felt comfortable with SQLite we decided to use it for our application. 
 
-Then we should discuss some design choices that we made. Like explaining the routers and the services. I don't think we should talk too much about design for the front end. 
+As mentioned in the **Requirement 5** section we used React in Javascript for the front-end. We decided to use javascript as it is an industry standard for front-end applications. 
+This project was the perfect opportunity to learn it. Specific features in React, like the ability to create components, were recommended to us by a student who had taken the course before.  
 
+### Design
+During the development process of the back-end we tried to keep good design as a priority. We did this by following FastAPI conventions and other good API design principles. For example, we have separate packages in the **Router** and **Services**
+that enforce the separation of concerns. The separation of concerns is further improved as we implement a model and a controller. Our model is the CountryData class
+as it defines the structure of the data. Our Routers in the **Routers** package are the link between the model and the controller. The routers receive HTTP requests and delegate the logic to handle these requests to the appropriate functions in the **services** package. 
+These functions act as the controller.
+
+Where possible we created functions that can be re-used throughout the code such as the **query_country_data** and the **handle_not_found**
+functions in the **country_service.py** file. This improves the re-usability of the code. To avoid large and hard-to-understand functions we have split up the functions 
+for endpoints when a different combination of parameters can be input. In the future it would be beneficial to split the **country_service.py** file into more files where the new files are responsible for endpoints of the API. 
+This de-clutters the current **country_service.py** file. 
+
+
+
+## Maturity level and Issues
+The different endpoints of our API make use of different HTTP verbs such as: GET, POST, PUT and DELETE. As we are using the verbs to interact with the resources of our back-end, the API meets the second maturity level. 
+Since we do not use Hypermedia controls our API does not meet the level 3 threshold. As a conclusion the maturity level of our API is level 2.
+
+Through our thorough test files and the manual testing we performed, we believe (and hope) there are no issues with our API. 
 
 ## Work Distribution and Roles
 As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we 5constantly kept each-other updated on
@@ -127,11 +148,14 @@ and put effort into the project.
 ## Bonus Criteria
 1. We increased the complexity of the endpoints throughout our API in a couple ways. For example, we allow for many more country data field to be input than stated in **Requirement 1.1**. Instead of only allowing GDP and Population we also allow emissions data, ISO Code, name and some others.
 As well, the way we handled updating a country's data should be noted. The dropdown box allows for a nice way to select the country you want to update, displaying all it's current fields, not just the GDP and population data.
-Like this you can change any field you want and submit the update request. Moreover, we allow for data searches before a given year, not just after. Lastly, we added an endpoint that calculates the population change of a continent over a given period of time. 
+This way you can change any field you want and submit the update request. Moreover, we allow for data searches before a given year, not just after. Lastly, we added an endpoint that calculates the population change of a continent over a given period of time. 
 2. We have implemented an endpoint that makes use of a third party API. This endpoint can be found in the **/routers/country_routes.py** file. 
 The third party API's documentation can be found on the following website: https://restcountries.com/. 
 Our call to this API **gets** information about the country specified that is not in the provided database. Such as: the capital of the country, the country's currency, the languages spoken in the country and a variety of other things. 
 3. Our application was made deployable by creating and properly configuring the **Dockerfile**. The **Docker instructions** section of the report helps to set this up. 
 To meet the criteria of the bonus we create a separate image for the back-end and front-end of the application. When following the instructions the application is deployable and can be tested and used normally.
-4. ### Once we have written the design part of the program this will be quick
-5. ### Max could comment on this. 
+4. We aim to meet this bonus point from our description in the **Design & Framework rationale** section and through the overall design of our code. 
+5. To automate the build, test and deployment process we have used the Gitlab CI/CD pipeline feature. How this works is specified in the
+**.gitlab-ci.yml** file. This file describes what happens in each of the workflow stages. Such as, building and then pushing the docker images into the gitlab registries. We have written tests 
+which are automatically run when pushes are made onto gitlab. These tests indicate whether the newest changes respect the desired correctness of the application. 
+The testing is an important part of the CI/CD pipeline.
