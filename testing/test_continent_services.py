@@ -1,13 +1,15 @@
-from fastapi import HTTPException
 import pytest
+from fastapi import HTTPException
 from services import continent_service
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from dataManagement import models
 
 # The TestDB has only data for 2010, 2011, and 2012
 def get_test_db():
     db_url = "sqlite:///TestDB.db"
     engine = create_engine(db_url)
+    models.Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
