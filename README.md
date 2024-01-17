@@ -127,7 +127,7 @@ Since we do not use Hypermedia controls our API does not meet the level 3 thresh
 Through our thorough test files and the manual testing we performed, we believe (and hope) there are no issues with our API. 
 
 ## Work Distribution and Roles
-As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we 5constantly kept each-other updated on
+As a team we communicated a lot. Whether this was by doing in person work together or through messages on the Whatsapp chat, we constantly kept each-other updated on
 what was happening from everyone's side. This helped us a lot as we could help each other out quickly. Overall, we feel the collaboration of the team was very good. 
 
 Max was very dedicated to the project and did a big part of it. He implemented the majority of the back-end of the application. As well, he created the core components for the front-end application. 
@@ -159,3 +159,27 @@ To meet the criteria of the bonus we create a separate image for the back-end an
 **.gitlab-ci.yml** file. This file describes what happens in each of the workflow stages. Such as, building and then pushing the docker images into the gitlab registries. We have written tests 
 which are automatically run when pushes are made onto gitlab. These tests indicate whether the newest changes respect the desired correctness of the application. 
 The testing is an important part of the CI/CD pipeline.
+
+
+## Use of AI throughout the project
+### Github copilot
+Max is the only one who makes use of GitHub copilot (1.4.5.4049 pycharm).
+He uses it for very little new code generation, 
+but in cases where it is repetitive code with slight changes he uses it to generate the code.
+And then changes it if necessary.
+He makes sure not to blindly generate code from co—pilot as it is not always correct. 
+The testing implemented by Max relied quite heavily on copilot as in the majority of the cases it was just a matter
+of changing the input and output of the test which is time-consuming to do manually.
+
+### ChatGPT
+We all make use of ChatGPT (Arnaud and Bart GPT 3.5, Max GPT 4.0) to some extent;
+however, it does not play a significant role in our project. 
+The majority of its usage was for prompts following the following structure:
+- **Prompt**: "I have this line of code, but I need to have the results ordered by the year. How do I do this?"
+- **Prompt**: "Why would this code return a 404 error in case of this input?"
+- **Prompt**: "I have this code, but I need to add a new endpoint that does this. How do I do this?"
+- **Prompt**: "I need a test that checks if this endpoint returns the correct data given that the data should look like x. How do I do this?"
+- **Prompt**: "I need a test that check if an endpoint returns a 404 error given that the input is x. How do I do this?"
+- **Prompt**: "How could I extract this method out of this function?"
+
+
