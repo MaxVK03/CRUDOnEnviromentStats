@@ -60,7 +60,7 @@ def handle_not_found(result, opType):
 def get_country_data_with_timeFrame(db, countryName, iso, yearid, timeFrame):
     field = 'country' if countryName else 'iso_code'
     value = countryName or iso
-    return query_country_data(db, field, value, yearid, timeFrame)
+    return handle_not_found(query_country_data(db, field, value, yearid, timeFrame), "get")
 
 
 # Function for getting country data without the time frame. Works the same as the function above.
@@ -136,6 +136,7 @@ def get_country_emissions_by_name(db, countryName, iso):
         ).all()
         return handle_not_found(result, "get")
 
+
 def delete_country_data_by_name_and_year(db, countryName, yearid):
     data_to_delete = db.query(CountryData).filter(CountryData.country == countryName,
                                                   CountryData.year == yearid).first()
@@ -145,6 +146,7 @@ def delete_country_data_by_name_and_year(db, countryName, yearid):
     db.commit()
     return {"detail": "Deleted successfully"}
 
+
 def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
     data_to_delete = db.query(CountryData).filter(CountryData.iso_code == countryIsocode,
                                                   CountryData.year == yearid).first()
@@ -153,6 +155,7 @@ def delete_country_data_by_isocode_and_year(db, countryIsocode, yearid):
     db.delete(data_to_delete)
     db.commit()
     return {"detail": "Deleted successfully"}
+
 
 # Other CRUD operations
 # Creates a country data item for the provided year with the provided data.
@@ -190,10 +193,7 @@ def update_country(db, countryName, iso, year, updated_data):
 
 def get_all_data(db):
     result = db.query(CountryData).all()
-    return result
-
-
-
+    return handle_not_found(result, "get")
 
 
 def getClimContYear(db, noCountries, year, sort):
@@ -265,8 +265,9 @@ def getEnergy(db, page, noCountries, year):
 
     return handle_not_found(result, "get")
 
-#Third party API call. Gets additional country information such as the capital, currency and official name.
-def     get_Country_Add_Data(country_name):
+
+# Third party API call. Gets additional country information such as the capital, currency and official name.
+def get_Country_Add_Data(country_name):
     country_name = country_name.replace(" ", "%20")
     url = f"https://restcountries.com/v3.1/name/{country_name}?fullText=true"
     response = requests.get(url)
@@ -274,6 +275,7 @@ def     get_Country_Add_Data(country_name):
     result = response.json()
     return handle_not_found(result, "get")
 
-#Used to get the list of all countries in the database. This function is called when the user wants to update.
+
+# Used to get the list of all countries in the database. This function is called when the user wants to update.
 def get_country_list(db: Session):
-    return db.query(CountryData.country, CountryData.iso_code).distinct().filter(CountryData.country.not_in(CONTINENTS))
+    return handle_not_found(db.query(CountryData.country, CountryData.iso_code).distinct().filter(CountryData.country.not_in(CONTINENTS)), "get")

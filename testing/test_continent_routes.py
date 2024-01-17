@@ -4,9 +4,9 @@ from unittest.mock import Mock, patch
 import dataManagement.models
 from main import app
 
-# client = TestClient(app)
+client = TestClient(app)
 
-'''
+
 def test_get_temperature_change_by_continent_valid_no_year():
     with patch('services.continent_service.get_temperature_change_by_continent') as mock_service:
         mock_service.return_value = {'data': 'some data'}
@@ -42,4 +42,3 @@ def test_get_temperature_change_by_continent_no_year_in_csv():
 def test_get_temperature_change_by_continent_invalid_continent():
     response = client.get("/continent/temperatureChange?continent=Unknown")
     assert response.status_code == 400
-'''

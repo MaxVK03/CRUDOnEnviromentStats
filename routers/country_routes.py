@@ -40,9 +40,9 @@ async def get_country_data(
         - Missing country name or ISO code.
     """
     if countryName or countryIsocode:
-        if yearid:
+        if yearid and (timeFrame.lower() in ["before", "after", "equal"]):
             result = country_service.get_country_data_with_timeFrame(
-                db, countryName, countryIsocode, yearid, timeFrame
+                db, countryName, countryIsocode, yearid, timeFrame.lower()
             )
         else:
             result = country_service.get_country_data_without_timeFrame(
@@ -53,7 +53,7 @@ async def get_country_data(
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
-        return country_service.handle_not_found(result, "get")
+        return result
 
 
 @router.post("/country")
@@ -235,7 +235,7 @@ async def get_country_emissions(
     if inCSV:
         return StreamingResponse(iter([converter.csvSender(result)]), media_type="text/csv")
     else:
-        return country_service.handle_not_found(result, "get")
+        return result
 
 
 # energy per capita and gdp
