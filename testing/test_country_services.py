@@ -426,7 +426,7 @@ def test_getEnergy_valid():
 
 def test_getEnergy_default_params():
     db = get_test_db()
-    result = country_service.getEnergy(db, None, None, 2021)
+    result = country_service.getEnergy(db, 2, None, 2011)
     assert isinstance(result, list)
     assert len(result) == 10
 
